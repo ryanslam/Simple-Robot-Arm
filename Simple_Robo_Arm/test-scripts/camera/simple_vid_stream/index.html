@@ -1,0 +1,160 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Webstream demo</title>
+
+    <style type="text/css">
+        * {
+            box-sizing: border-box
+        }
+        body {
+            /* color: whitesmoke; */
+            /* background-color: #585858  */
+            background-color: white
+        }
+        .window {
+            /* width: 400px; */
+            height: 150px;
+            margin: 0 auto;
+            border: solid 1px #ccc;
+            border-radius: 5px;
+            overflow: hidden
+        }
+        .log_window {
+            /* width: 400px; */
+            height: 150px;
+            overflow: auto;
+            /* transform: rotate(180deg); */
+            /* direction: rtl */
+        }
+        .log_window.log_line {
+            /* border-bottom: solid 1px #ccc; */
+            padding: 10px;
+            /* transform: rotate(180deg); */
+            /* direction: ltr */
+            direction: rtl;
+        }
+        
+        .log_window.log_line.debug {
+            color: gray
+        }
+        .log_window.log_line.info {
+            color: green
+        }
+        .log_window.log_line.warning {
+            color: orange
+        }
+        .log_window.log_line.error {
+            color: red
+        }
+        .log_window.log_line.datetime {
+            color: gray
+        }
+
+        .command_window {
+            color: black;
+            margin: 0 auto;
+            border: solid 1px #ccc;
+            border-radius: 5px;
+        }
+    
+    </style>
+
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <script>
+	// < !-change the host if sending the message outside localhost ->
+      const socket = io("http://simple-robot-arm:8080",
+        {transports: ['websocket', 'polling', 'flashsocket']}
+      );
+        
+        socket.on("disconnect", function (){
+            console.log("Disconnected from server.")    // alert?
+        });
+
+        ////////////////////////
+        // IN BOUND TELEMETRY
+        ////////////////////////
+        function append_log_level(level) {
+            var log_level = document.createElement("SMALL");
+            log_level.innerHTML = level;
+            
+            switch(level){
+                case "DEBUG":
+                    log_level.className = "log_window log_line debug";
+                    break;
+                case "INFO":
+                    log_level.className = "log_window log_line info";
+                    break;
+                case "WARNING":
+                    log_level.className = "log_window log_line warning";
+                    break;
+                case "ERROR":
+                    log_level.className = "log_window log_line error";
+                    break;
+                default:
+                    log_level.className = "log_window log_line info";
+                    console.log("Error setting log level class!");
+            }
+            document.getElementById("log_window").append(log_level)
+
+        }
+
+        socket.on("log", function (t, name, level, msg) {
+            // recieved an output from one of the server loggers. add it to the telemetry window
+            console.log("Received log message. Time: "+ t + " Level: " + level + " Msg: " + msg);
+            var datetime = document.createElement("SMALL");
+            var logger_name = document.createElement("SMALL");
+            var msg_data = document.createElement("SMALL");
+            var msg_break = document.createElement("SMALL");
+            
+            datetime.innerHTML = t;
+            logger_name.innerHTML = name;
+            msg_data.innerHTML = msg;
+
+            // set the formatting of the elements
+            datetime.className = "log_window log_line datetime";
+            msg_data.className = "log_window log_line";
+ 
+            var b = document.createElement("BR");
+
+            // document.getElementById("log_window").prepend(b)        // necessary for the small items (not for p)
+            // document.getElementById("log_window").prepend(msg_data)
+            // append_log_level(level)
+            // document.getElementById("log_window").prepend(logger_name)
+            // document.getElementById("log_window").prepend(datetime)
+            log_window = document.getElementById("log_window");
+            log_window.append(b);        // necessary for the small items (not for p)
+            log_window.append(datetime);
+            log_window.append(logger_name);
+            append_log_level(level);
+            log_window.append(msg_data);
+
+            shouldScroll = log_window.scrollTop + log_window.clientHeight === log_window.scrollHeight;
+            if (!shouldScroll) {
+                log_window.scrollTop = log_window.scrollHeight;
+            }
+        });
+
+    </script>
+
+    <br>
+    <legend>Robot Log:</legend>
+    <div class="window">
+        <div class="log_window" id="log_window"></div>
+    </div>
+
+    <div class="video_container">
+        <h2>Live Video Feed</h2>
+        <img id="video_feed", src="/video_feed">
+    </div>
+
+</body>
+</html>

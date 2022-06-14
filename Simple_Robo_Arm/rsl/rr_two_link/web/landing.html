@@ -1,0 +1,74 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<style>
+    * {
+        box-sizing: border-box
+    }
+    body {
+        /* color: whitesmoke; */
+        /* background-color: #585858  */
+        background-color: white
+    }
+    .button {
+        border-radius: 4px;
+        color: black;
+        transition-duration: 0.2s;
+    }
+    .button:hover {
+    background-color: #353535; /* Green */
+    color: white;
+    }
+
+    .window {
+        /* width: 400px; */
+        height: 150px;
+        margin: 0 auto;
+        border: solid 1px #ccc;
+        border-radius: 4px;
+        overflow: hidden
+    }
+    .command_window {
+        color: black;
+        margin: 0 auto;
+        border: solid 1px #ccc;
+        border-radius: 4px;
+    }
+</style>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>RSL RR Two Link</title>
+
+    <!-- <link rel="stylesheet" type="text/css" href="/home/pi/simple-robot-arm/rsl/rr_two_link/web/styles.css"> -->
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <!-- <script src="/client.js"></script> -->
+    <script>
+        // < !-change the host if sending the message outside localhost ->
+        const socket = io("http://simple-robot-arm:8080",
+        {transports: ['websocket', 'polling', 'flashsocket']}
+        );
+
+        socket.on("disconnect", function (){
+            console.log("Disconnected from server.")    // alert?
+        });
+    </script>
+
+    <h1>Educational Web Controlled Robot Arm</h1>
+    <div>
+        <strong><nav>
+            <ul class="menu">
+                <li><a href="http://simple-robot-arm:8080/master">Master Control Page</a></li>
+                <li><a href="http://simple-robot-arm:8080/assignment_1">Assignment 1</a></li>
+                <li><a href="http://simple-robot-arm:8080/exercise_1">Forward Kinematics</a></li>
+            </ul>
+        </nav></strong>
+    </div>
+</body>
+</html>

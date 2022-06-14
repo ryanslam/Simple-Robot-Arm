@@ -1,0 +1,76 @@
+* {
+    box-sizing: border-box
+}
+body {
+    /* color: whitesmoke; */
+    /* background-color: #585858  */
+    background-color: rgb(138, 136, 136);
+}
+
+.center {
+    text-align: center;
+}
+
+.button {
+    border-radius: 4px;
+    color: black;
+    transition-duration: 0.2s;
+}
+.button:hover {
+background-color: #353535; /* Green */
+color: white;
+}
+
+.video_feed_text{
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.video_container {
+    margin: auto;
+    text-align: center;
+}
+
+.window {
+    /* width: 400px; */
+    height: 150px;
+    margin: 0 auto;
+    border: solid 1px #ccc;
+    border-radius: 4px;
+    overflow: hidden
+}
+.log_window {
+    /* width: 400px; */
+    height: 150px;
+    overflow: auto;
+    /* transform: rotate(180deg); */
+    /* direction: rtl */
+}
+.log_window.log_line {
+    /* border-bottom: solid 1px #ccc; */
+    padding: 10px;
+    /* transform: rotate(180deg); */
+    /* direction: ltr */
+    direction: rtl;
+}        
+.log_window.log_line.debug {
+    color: gray
+}
+.log_window.log_line.info {
+    color: green
+}
+.log_window.log_line.warning {
+    color: orange
+}
+.log_window.log_line.error {
+    color: red
+}
+.log_window.log_line.datetime {
+    color: gray
+}
+.command_window {
+    color: black;
+    margin: 0 auto;
+    border: solid 1px #ccc;
+    border-radius: 4px;
+}

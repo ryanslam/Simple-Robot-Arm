@@ -1,0 +1,19 @@
+###### Requirements without Version Specifiers ######`
+wheel
+numpy
+aiohttp
+gpiozero
+asyncio
+dynamixel-controller
+roboticstoolbox-python  # this is super heavy but has some real handy functionality
+simple-pid
+
+# for some reason, this doesn't get installed despite the rtb depending on spatial math depending on this
+sympy
+
+# others
+opencv-python
+
+# for the server
+python-engineio == 3.9.3
+python-socketio == 4.3.1

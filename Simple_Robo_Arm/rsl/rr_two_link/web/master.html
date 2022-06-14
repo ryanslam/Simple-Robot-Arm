@@ -1,0 +1,424 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<style>
+    * {
+        box-sizing: border-box
+    }
+    body {
+        /* color: whitesmoke; */
+        /* background-color: #585858  */
+        background-color: white
+    }
+    .button {
+        border-radius: 4px;
+        color: black;
+        transition-duration: 0.2s;
+    }
+    .button:hover {
+    background-color: #353535; /* Green */
+    color: white;
+    }
+
+    .window {
+        /* width: 400px; */
+        height: 150px;
+        margin: 0 auto;
+        border: solid 1px #ccc;
+        border-radius: 4px;
+        overflow: hidden
+    }
+    .log_window {
+        /* width: 400px; */
+        height: 150px;
+        overflow: auto;
+        /* transform: rotate(180deg); */
+        /* direction: rtl */
+    }
+    .log_window.log_line {
+        /* border-bottom: solid 1px #ccc; */
+        padding: 10px;
+        /* transform: rotate(180deg); */
+        /* direction: ltr */
+        direction: rtl;
+    }        
+    .log_window.log_line.debug {
+        color: gray
+    }
+    .log_window.log_line.info {
+        color: green
+    }
+    .log_window.log_line.warning {
+        color: orange
+    }
+    .log_window.log_line.error {
+        color: red
+    }
+    .log_window.log_line.datetime {
+        color: gray
+    }
+    .command_window {
+        color: black;
+        margin: 0 auto;
+        border: solid 1px #ccc;
+        border-radius: 4px;
+    }
+</style>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>RSL RR Two Link</title>
+
+    <!-- <link rel="stylesheet" type="text/css" href="/home/pi/simple-robot-arm/rsl/rr_two_link/web/styles.css"> -->
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <!-- <script src="/client.js"></script> -->
+    <script>
+        // < !-change the host if sending the message outside localhost ->
+        const socket = io("http://simple-robot-arm:8080",
+        {transports: ['websocket', 'polling', 'flashsocket']}
+        );
+
+        socket.on("disconnect", function (){
+            console.log("Disconnected from server.")    // alert?
+        });
+
+
+        ////////////////////////
+        // OUT BOUND COMMANDS UTILITY
+        ////////////////////////
+        function reconnect_motors() {
+            console.log("Client sending command RECONNECT_MOTORS")
+            socket.emit("reconnect_motors")
+        }
+
+        function go_home() {
+            console.log("Client sending command GO_HOME")
+            socket.emit("home");
+        }
+
+        function disable_torque() {
+            console.log("Client sending command DISABLE_TORQUE")
+            socket.emit("torque_disable");
+        }
+
+        function enable_torque() {
+            console.log("Client sending command ENABLE_TORQUE")
+            socket.emit("torque_enable")
+        }
+
+        function set_joint_position() {
+            console.log("Client sending command MOVE_JOINTS_ABSOLUTE")
+            t1 = document.getElementById("theta1").value
+            t2 = document.getElementById("theta2").value
+            guessing_solution = document.getElementById("check_forward_kinematic_solution").checked
+            use_traj = document.getElementById("use_joint_traj").checked
+            traj_time = document.getElementById("joint_traj_time").value
+            if (guessing_solution){
+                x_guess = document.getElementById("x_forward_kinematic_guess").value
+                y_guess = document.getElementById("y_forward_kinematic_guess").value
+                socket.emit("set_joint_position", use_traj, traj_time, t1, t2, x_guess, y_guess);
+            }else{
+                socket.emit("set_joint_position", use_traj, traj_time, t1, t2);
+            }
+        }
+
+        function set_cartesian_position() {
+            console.log("Client sending command MOVE_CARTESIAN_ABSOLUTE")
+            x = document.getElementById("x_mm").value
+            y = document.getElementById("y_mm").value
+            use_traj = document.getElementById("use_cart_traj").checked
+            traj_time = document.getElementById("cart_traj_time").value
+            guessing_solution = document.getElementById("check_inverse_kinematic_solution").checked
+            if (guessing_solution){
+                t1_guess = document.getElementById("t1_inverse_kinematic_guess").value
+                t2_guess = document.getElementById("t2_inverse_kinematic_guess").value
+                socket.emit("set_cartesian_position", use_traj, traj_time, x, y, t1_guess, t2_guess);
+            }else{
+                socket.emit("set_cartesian_position", use_traj, traj_time, x, y);
+            }
+        }
+
+        function set_active_controller() {
+            console.log("Client sending command SET_ACTIVE_CONTROLLER")
+            controller_to_set = document.getElementById("controller_select").value
+            socket.emit("set_active_controller", controller_to_set)
+        }
+
+        function set_controller_gains() {
+            console.log("Client sending command SET_CONTROLLER_GAINS")
+            motor_id = document.getElementById("motor_id").value
+            kp = document.getElementById("kp").value
+            // ki = document.getElementById("ki").value
+            kd = document.getElementById("kd").value
+            socket.emit("set_controller_gains", motor_id, kp, 0, kd)
+        }
+
+        /////////////////////////////////////
+        // OUT BOUND COMMANDS DEMONSTRATIONS
+        /////////////////////////////////////
+        function controls_refresher_demo() {
+            console.log("Client sending command CONTROLS_REFRESHER_DEMO")
+            socket.emit("controls_refresher")
+        }
+
+        function workspace_demo() {
+            console.log("Client sending command WORKSPACE_DEMO")
+            theta_1_min = document.getElementById("theta_1_min_workspace").value
+            theta_1_max = document.getElementById("theta_1_max_workspace").value
+            theta_2_min = document.getElementById("theta_2_min_workspace").value
+            theta_2_max = document.getElementById("theta_2_max_workspace").value
+            socket.emit("workspace_demo", theta_1_min, theta_1_max, theta_2_min, theta_2_max);
+        }
+        
+        function jacobian_demo() {
+            console.log("Client sending command JACOBIAN_DEMO")
+            theta2 = document.getElementById("theta_2_jacobian_demo").value
+            socket.emit("jacobian_demo", theta2)
+        }
+
+        function dynamics_coupling_demo() {
+            console.log("Client sending command DYNAMICS_COUPLING_DEMO")
+            socket.emit("dynamics_coupling_demo")
+        }
+
+        function dynamics_time_varying_demo() {
+            console.log("Client sending command DYNAMICS_TIME_VARYING_DEMO")
+            socket.emit("dynamics_time_varying_demo")
+        }
+
+        function reconnect_dynamixel() {
+            console.log("Client sending command RECONNECT")
+            socket.emit("reconnect_dynamixel")
+        }
+
+        ////////////////////////
+        // IN BOUND TELEMETRY
+        ////////////////////////
+        function append_log_level(level) {
+            var log_level = document.createElement("SMALL");
+            log_level.innerHTML = level;
+            
+            switch(level){
+                case "DEBUG":
+                    log_level.className = "log_window log_line debug";
+                    break;
+                case "INFO":
+                    log_level.className = "log_window log_line info";
+                    break;
+                case "WARNING":
+                    log_level.className = "log_window log_line warning";
+                    break;
+                case "ERROR":
+                    log_level.className = "log_window log_line error";
+                    break;
+                default:
+                    log_level.className = "log_window log_line info";
+                    console.log("Error setting log level class!");
+            }
+            document.getElementById("log_window").append(log_level)
+
+        }
+
+        socket.on("log", function (t, name, level, msg) {
+            // recieved an output from one of the server loggers. add it to the telemetry window
+            console.log("Received log message. Time: "+ t + " Level: " + level + " Msg: " + msg);
+            var datetime = document.createElement("SMALL");
+            var logger_name = document.createElement("SMALL");
+            var msg_data = document.createElement("SMALL");
+            var msg_break = document.createElement("SMALL");
+            
+            datetime.innerHTML = t;
+            logger_name.innerHTML = name;
+            msg_data.innerHTML = msg;
+
+            // set the formatting of the elements
+            datetime.className = "log_window log_line datetime";
+            msg_data.className = "log_window log_line";
+
+            var b = document.createElement("BR");
+
+            // document.getElementById("log_window").prepend(b)        // necessary for the small items (not for p)
+            // document.getElementById("log_window").prepend(msg_data)
+            // append_log_level(level)
+            // document.getElementById("log_window").prepend(logger_name)
+            // document.getElementById("log_window").prepend(datetime)
+            log_window = document.getElementById("log_window");
+            log_window.append(b);        // necessary for the small items (not for p)
+            log_window.append(datetime);
+            log_window.append(logger_name);
+            append_log_level(level);
+            log_window.append(msg_data);
+
+            shouldScroll = log_window.scrollTop + log_window.clientHeight === log_window.scrollHeight;
+            if (!shouldScroll) {
+                log_window.scrollTop = log_window.scrollHeight;
+            }
+        });
+
+        socket.on("telemetry", function(motor_0_enabled, motor_1_enabled, current_controller, motor_0_gains, motor_1_gains, t1, t2, x, y){
+            document.getElementById("motor_0_enabled").innerHTML = "Servo 0 enabled: " + motor_0_enabled + ";";
+            document.getElementById("motor_1_enabled").innerHTML = "Servo 1 enabled: " + motor_1_enabled + ";";
+            document.getElementById("current_controller").innerHTML = "Active controller: " + current_controller + ";";
+            document.getElementById("controller_gains_0").innerHTML = "Controller gains motor 0 (PID)" + motor_0_gains + ";";
+            document.getElementById("controller_gains_1").innerHTML = "Controller gains motor 1: (PID)" + motor_1_gains + ";";
+            document.getElementById("ee_position").innerHTML = "X: " + String(x) + ", Y: " + String(y) + " (mm)";
+            document.getElementById("joint_position").innerHTML = "Theta1: " + String(t1) + ", Theta2: " + String(t2) + " (deg)";
+        })
+    </script>
+
+    <h1>Educational Web Controlled Robot Arm</h1>
+    <div>        
+        <strong><nav>
+            <ul class="menu">
+                <li><a href="http://simple-robot-arm:8080">Site navigation</a></li>
+            </ul>
+        </nav></strong>
+
+        <h2>Telemetry</h2>
+        <fieldset class="command_window">
+            <small id="motor_0_enabled"></small>
+            <small id="motor_1_enabled"></small>
+            <small id="ee_position"></small>
+            <small id="joint_position"></small>
+            <br>
+            <small id="current_controller"></small>
+            <small id="controller_gains_0"></small>
+            <small id="controller_gains_1"></small>
+            <br>
+            <small>Link lengths: (200, 200) mm</small>
+        </fieldset>
+    </div>
+    <br>
+    <legend>Activity Log:</legend>
+    <div class="window">
+        <div class="log_window" id="log_window"></div>
+    </div>
+    <div>
+        <h2>Arm Control</h2>
+        <fieldset class="command_window">
+             <fieldset class="command_window">
+                 <legend>UTILITY</legend>
+                <button class="button" onClick="disable_torque()">MOTORS OFF</button>
+                <button class="button" onClick="enable_torque()">MOTORS ON</button>
+                <button class="button" onClick="go_home()">GO HOME</button>
+                <button class="button" onClick="reconnect_dynamixel()">RECONNECT TO DYNAMIXEL</button>
+            </fieldset>
+        
+            <fieldset class="command_window">
+                <legend>DEMONSTRATIONS</legend>
+                <button class="button" onClick="controls_refresher_demo()">CONTROLS REFRESHER DEMO</button>
+                <br>
+                <br>
+                <label for="theta_1_min_workspace">Theta1 (min, max)</label>
+                <input name="theta_1_min_workspace" type="number" id="theta_1_min_workspace" value="-180" min="-180" max="180">
+                <input name="theta_1_max_workspace" type="number" id="theta_1_max_workspace" value="180" min="-180" max="180">
+                <br>
+                <label for="theta_2_min_workspace">Theta2 (min, max)</label>
+                <input name="theta_2_min_workspace" type="number" id="theta_2_min_workspace" value="-180" min="-180" max="180">
+                <input name="theta_2_max_workspace" type="number" id="theta_2_max_workspace" value="180" min="-180" max="180">
+                <br>
+                <button class="button" onClick="workspace_demo()">WORKSPACE DEMO</button>
+                <br>
+                <br>
+                <button class="button" onClick="jacobian_demo()">JACOBIAN DEMO</button>
+                <label for="theta_2_jacobian_demo">Theta 2 position jacobian demo (deg):</label>
+                <input name="theta_2_jacobian_demo" type="number" id="theta_2_jacobian_demo" value="" min="-180" max="180">
+                <br>
+                <br>
+                <button class="button" onClick="dynamics_coupling_demo()">DYNAMICS COUPLING DEMO</button>
+                <button class="button" onClick="dynamics_time_varying_demo()">DYNAMICS TIME VARYING DEMO</button>
+                <br>
+            </fieldset>
+            <br>
+            <fieldset class="command_window">
+                <legend>CONTROL SETTINGS</legend>
+                <button class="button" onClick="set_active_controller()">SET ACTIVE CONTROLLER</button>
+                <select name="controller_select" id="controller_select">
+                    <option value="0">ACTUATOR POSITION CONTROLLER</option>
+                    <option value="2">FEED FORWARDS VELOCITY </option>
+                    <option value="4">JOINT PID TORQUE</option>
+                    <option value="3">RESOLVED RATE (SPEED)</option>
+                    <option value="5">CARTESIAN TORQUE</option>
+                </select>
+                <br>
+                <br>
+                <button class="button" onClick="set_controller_gains()">SET CONTROLLER GAINS</button>
+                <select name="motor_id" id="motor_id">
+                    <option value="0">1st PID</option>
+                    <option value="1">2nd PID</option>
+                </select>
+                <label for="kp">Kp</label>
+                <input name="kp" type="number" id="kp" value="0" min="0" max="100" step="1">
+                <!-- <label for="ki">Ki</label> -->
+                <!-- <input name="ki" type="number" id="ki" value="0" min="0" max="100" step="1"> -->
+                <label for="kd">Kd</label>
+                <input name="kd" type="number" id="kd" value="0" min="0" max="100" step="1">
+                <br>
+            </fieldset>
+            <br>
+            <fieldset class="command_window">
+                <legend>SET GOAL JOINT POSITION</legend>
+                <label for="theta1">theta 1:</label>
+                <input name="theta1" type="number" id="theta1" value="0" min="-180" max="180" step="45">
+                <label for="theta2">theta 2:</label>
+                <input name="theta2" type="number" id="theta2" value="0" min="-180" max="180" step="45"> (degrees)
+                <br>
+                <label for="use_joint_traj">Make joint space trajectory</label>
+                <input type="checkbox" id = "use_joint_traj">
+                <label for="joint_traj_time">Joint trajectory time:</label>
+                <input name="joint_traj_time" type="number" id="joint_traj_time" value="" min="1" max="10">
+                <br>
+                <label for="check_forward_kinematic_solution">Guess at forward kinematic solution: </label>
+                <input type="checkbox" id = "check_forward_kinematic_solution">
+                <br>
+                <br>
+                <label for="x_forward_kinematic_guess">x guess:</label>
+                <input name="x_forward_kinematic_guess" type="number" id="x_forward_kinematic_guess" value="" min="-800" max="800">
+                <label for="y_forward_kinematic_guess">y guess:</label>
+                <input name="y_forward_kinematic_guess" type="number" id="y_forward_kinematic_guess" value="", min="-800" max="800"> (mm)
+                <br>
+                <button class="button" onClick="set_joint_position()">SET JOINT POSITION</button>
+            </fieldset>
+            <br>
+            <fieldset class="command_window">
+                <legend>SET GOAL CARTESIAN POSITION</legend>
+                <label for="x">x:</label>
+                <!-- should tie the below min/max to the actuator min/max -->
+                <input name="x" type="number" id="x_mm" value="0" min="-400" max="400" step="1">
+                <label for="y">y:</label>
+                <!-- should tie the below min/max to the actuator min/max -->
+                <input name="y" type="number" id="y_mm" value="0" min="-400" max="400" step="1"> (mm)
+                <br>
+                <label for="use_cart_traj">Make cartesian trajectory</label>
+                <input type="checkbox" id = "use_cart_traj">
+                <label for="cart_traj_time">Cart. trajectory time:</label>
+                <input name="cart_traj_time" type="number" id="cart_traj_time" value="" min="1" max="10">
+                <br>
+                <br>
+                <label for="check_inverse_kinematic_solution">Guess at inverse kinematic solution: </label>
+                <input type="checkbox" id = "check_inverse_kinematic_solution">
+                <br>
+                <label for="t1_inverse_kinematic_guess">Theta 1 guess:</label>
+                <input name="t1_inverse_kinematic_guess" type="number" id="t1_inverse_kinematic_guess" value="" min="-180" max="180">
+                <!-- <br> -->
+                <label for="t2_inverse_kinematic_guess">Theta 2 guess:</label>
+                <input name="t2_inverse_kinematic_guess" type="number" id="t2_inverse_kinematic_guess" value="" min="-180" max="180"> (degrees)
+                <br>
+                <button class="button" onClick="set_cartesian_position()">SET CARTESIAN POSITION</button>
+            </fieldset>
+        </fieldset>
+    </div>
+
+    <div class="video_container">
+        <h2>Live Video Feed</h2>
+        <img id="video_feed", src="/video_feed">
+    </div>
+
+</body>
+</html>

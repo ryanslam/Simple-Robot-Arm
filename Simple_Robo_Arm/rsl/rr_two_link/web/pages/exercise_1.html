@@ -1,0 +1,68 @@
+<!-- Webpage for the Forward Kinematics Exercise -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Forward Kinematic Exercise</title>
+        <link rel="stylesheet" type="text/css" href="../styles/exercise_layout.css">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+        <script>
+            // < !-change the host if sending the message outside localhost ->
+            const socket = io("http://simple-robot-arm:8080",
+            {transports: ['websocket', 'polling', 'flashsocket']}
+            );
+    
+            socket.on("disconnect", function (){
+                console.log("Disconnected from server.")    // alert?
+            });
+            </script>
+    </head>
+
+    <body>
+        <!-- Scripts used for the commands. -->
+        <script src="../scripts/utility.js"></script>
+        <script src="../scripts/forward_kin.js"></script>
+
+        <h1 class="center">Forward Kinematic Example</h1>
+        <div class="video_container">
+            <fieldset class="command_window">
+                <legend class="video_feed_text">Video Feed</legend>
+                <img id="video_feed", src="/video_feed">
+            </fieldset>
+        </div>
+        <br>
+        <fieldset class="command_window">
+            <legend class="video_feed_text">Commands</legend>
+            <fieldset class="command_window">
+                <legend>UTILITY</legend>
+               <button class="button" onClick="disable_torque()">MOTORS OFF</button>
+               <button class="button" onClick="enable_torque()">MOTORS ON</button>
+               <button class="button" onClick="go_home()">GO HOME</button>
+               <button class="button" onClick="reconnect_dynamixel()">RECONNECT TO DYNAMIXEL</button>
+            </fieldset>
+            <fieldset class="command_window">
+                <legend>SET GOAL JOINT POSITION</legend>
+                <label for="theta1">θ_1:</label>
+                <input name="theta1" type="number" id="theta1" value="0" min="-180" max="180" step="45">
+                <label for="theta2">θ_2:</label>
+                <input name="theta2" type="number" id="theta2" value="0" min="-180" max="180" step="45"> (degrees)
+                <br>
+                <label for="use_joint_traj">Make joint space trajectory</label>
+                <input type="checkbox" id = "use_joint_traj">
+                <label for="joint_traj_time">Joint trajectory time:</label>
+                <input name="joint_traj_time" type="number" id="joint_traj_time" value="" min="1" max="10">
+                <br>
+                <label for="check_forward_kinematic_solution">Guess at forward kinematic solution: </label>
+                <input type="checkbox" id = "check_forward_kinematic_solution">
+                <br>
+                <label for="x_forward_kinematic_guess">x guess:</label>
+                <input name="x_forward_kinematic_guess" type="number" id="x_forward_kinematic_guess" value="" min="-800" max="800">
+                <label for="y_forward_kinematic_guess">y guess:</label>
+                <input name="y_forward_kinematic_guess" type="number" id="y_forward_kinematic_guess" value="", min="-800" max="800"> (mm)
+                <br>
+                <button class="button" onClick="set_joint_position()">SET JOINT POSITION</button>
+            </fieldset>
+        </fieldset>
+    </body>
+</html>

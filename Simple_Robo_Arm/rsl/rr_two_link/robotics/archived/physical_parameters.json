@@ -1,0 +1,16 @@
+{
+    "link1": {
+        "mass": 0,
+        "inertia": 0,
+        "a_iplus1": 0,
+        "alpha_i_1": 0,
+        "d_1": 200
+    },
+    "link2": {
+        "mass": 0,
+        "inertia": 0,
+        "a_iplus1": 0,
+        "alpha_i_1": 0,
+        "d_1": 200
+    }
+}
