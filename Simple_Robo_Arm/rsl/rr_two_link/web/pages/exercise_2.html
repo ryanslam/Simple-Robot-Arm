@@ -19,7 +19,52 @@
             </script>
     </head>
     <body>
+        <script src="../scripts/utility.js"></script>
+        <script src="../scripts/inverse_kin.js"></script>
+
         <h1 class="center">Inverse Kinematics Exercise</h1>
-        
+        <div class="video_container">
+            <fieldset class="command_window">
+                <legend class="video_feed_text">Video Feed</legend>
+                <img id="video_feed", src="/video_feed">
+            </fieldset>
+        </div>
+        <br>
+        <fieldset class="command_window">
+            <legend class="video_feed_text">Commands</legend>
+            <fieldset class="command_window">
+                <legend>UTILITY</legend>
+               <button class="button" onClick="disable_torque()">MOTORS OFF</button>
+               <button class="button" onClick="enable_torque()">MOTORS ON</button>
+               <button class="button" onClick="go_home()">GO HOME</button>
+               <button class="button" onClick="reconnect_dynamixel()">RECONNECT TO DYNAMIXEL</button>
+            </fieldset>
+            <fieldset class="command_window">
+                <legend>SET GOAL CARTESIAN POSITION</legend>
+                <label for="x">x:</label>
+                <!-- should tie the below min/max to the actuator min/max -->
+                <input name="x" type="number" id="x_mm" value="0" min="-400" max="400" step="1">
+                <label for="y">y:</label>
+                <!-- should tie the below min/max to the actuator min/max -->
+                <input name="y" type="number" id="y_mm" value="0" min="-400" max="400" step="1"> (mm)
+                <br>
+                <label for="use_cart_traj">Make cartesian trajectory</label>
+                <input type="checkbox" id = "use_cart_traj">
+                <label for="cart_traj_time">Cart. trajectory time:</label>
+                <input name="cart_traj_time" type="number" id="cart_traj_time" value="" min="1" max="10">
+                <br>
+                <br>
+                <label for="check_inverse_kinematic_solution">Guess at inverse kinematic solution: </label>
+                <input type="checkbox" id = "check_inverse_kinematic_solution">
+                <br>
+                <label for="t1_inverse_kinematic_guess">θ_1 guess:</label>
+                <input name="t1_inverse_kinematic_guess" type="number" id="t1_inverse_kinematic_guess" value="" min="-180" max="180">
+                <!-- <br> -->
+                <label for="t2_inverse_kinematic_guess">θ_2 guess:</label>
+                <input name="t2_inverse_kinematic_guess" type="number" id="t2_inverse_kinematic_guess" value="" min="-180" max="180"> (degrees)
+                <br>
+                <button class="button" onClick="set_cartesian_position()">SET CARTESIAN POSITION</button>
+            </fieldset>
+        </fieldset>
     </body>
 </html>

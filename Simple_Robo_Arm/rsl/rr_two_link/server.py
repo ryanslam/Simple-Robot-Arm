@@ -105,9 +105,16 @@ async def assignment_1(request):
         return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
 
 @routes.get('/exercise_1')
-async def Exercise_1(request):
+async def exercise_1(request):
     path_to_this_file = os.path.dirname(os.path.abspath(__file__))
     filename = os.path.join(path_to_this_file, 'web/pages/exercise_1.html')
+    with open(filename) as file_obj:
+        return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
+
+@routes.get('/exercise_2')
+async def exercise_2(request):
+    path_to_this_file = os.path.dirname(os.path.abspath(__file__))
+    filename = os.path.join(path_to_this_file, 'web/pages/exercise_2.html')
     with open(filename) as file_obj:
         return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
 
