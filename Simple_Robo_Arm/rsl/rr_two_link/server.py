@@ -84,7 +84,7 @@ server_logger.addHandler(socket_logging_handler)
 @routes.get('/')
 async def landing(request):
     path_to_this_file = os.path.dirname(os.path.abspath(__file__))
-    filename = os.path.join(path_to_this_file, 'web/landing.html')
+    filename = os.path.join(path_to_this_file, 'template/landing.html')
     with open(filename) as file_obj:
         return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
 
@@ -92,7 +92,7 @@ async def landing(request):
 @routes.get('/master')
 async def master(request):
     path_to_this_file = os.path.dirname(os.path.abspath(__file__))
-    filename = os.path.join(path_to_this_file, 'web/master.html')
+    filename = os.path.join(path_to_this_file, 'template/master.html')
     with open(filename) as file_obj:
         return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
 
@@ -100,21 +100,21 @@ async def master(request):
 @routes.get('/assignment_1')
 async def assignment_1(request):
     path_to_this_file = os.path.dirname(os.path.abspath(__file__))
-    filename = os.path.join(path_to_this_file, 'web/assignment_1.html')
+    filename = os.path.join(path_to_this_file, 'template/assignment_1.html')
     with open(filename) as file_obj:
         return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
 
 @routes.get('/exercise_1')
 async def exercise_1(request):
     path_to_this_file = os.path.dirname(os.path.abspath(__file__))
-    filename = os.path.join(path_to_this_file, 'web/pages/exercise_1.html')
+    filename = os.path.join(path_to_this_file, 'template/exercise_1.html')
     with open(filename) as file_obj:
         return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
 
 @routes.get('/exercise_2')
 async def exercise_2(request):
     path_to_this_file = os.path.dirname(os.path.abspath(__file__))
-    filename = os.path.join(path_to_this_file, 'web/pages/exercise_2.html')
+    filename = os.path.join(path_to_this_file, 'template/exercise_2.html')
     with open(filename) as file_obj:
         return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
 
