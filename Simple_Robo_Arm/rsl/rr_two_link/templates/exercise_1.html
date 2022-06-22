@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8">
         <title>Forward Kinematic Exercise</title>
-        <link rel="stylesheet" type="text/css" href="../static/styles/exercise_layout.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
         <script>
@@ -20,8 +20,8 @@
     </head>
     <body>
         <!-- Scripts used for the commands. -->
-        <script src="../scripts/utility.js"></script>
-        <script src="../scripts/forward_kin.js"></script>
+        <script src="{{url_for('static', filename = 'scripts/utility.js')}}"></script>
+        <script src="{{url_for('static', filename = 'scripts/forward_kin.js')}}"></script>
 
         <h1 class="center">Forward Kinematic Example</h1>
         <div class="video_container">

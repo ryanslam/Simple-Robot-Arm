@@ -15,6 +15,7 @@ import logging
 import math
 import traceback
 import numpy as np
+import RPi.GPIO as GPIO     # Added to interact with Raspberry Pi GPIO.
 from socketio import server
 
 try:
