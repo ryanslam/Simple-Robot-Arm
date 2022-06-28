@@ -288,9 +288,15 @@ async def set_joint_position(id, use_traj:bool, traj_time:str, t1:str, t2:str, x
         x_correct = abs(solution[0] - float(x_guess)) < 2
         y_correct = abs(solution[1] - float(y_guess)) < 2
         if x_correct and y_correct:
+            # If correct, shine green LED.
+            toggle_led(11, 5)
             server_logger.info(f'Forward kinematics solution guess was correct! Solution: {solution}')
+            check_correct(True)
         else:
+            # If incorrect, shine red LED.
+            toggle_led(12, 5)
             server_logger.info(f'Forward kinematics solution guess was incorrect! Correct solution {solution}')
+            check_correct(True)
     await send_telemtry()
 
 
@@ -311,8 +317,12 @@ async def set_cartesian_position(id, use_traj:bool, traj_time:str, x_str:str, y_
         theta1_correct = abs(solution[0] - theta1) < 2
         theta2_correct = abs(solution[1] - theta2) < 2
         if theta1_correct and theta2_correct:
+            # If correct, shine green LED.
+            toggle_led(11, 5)
             server_logger.info(f'Inverse kinematics solution guess was correct! Solution: {solution}')
         else:
+             # If incorrect, shine red LED.
+            toggle_led(12, 5)
             server_logger.info(f'Inverse kinematics solution guess was incorrect! Correct solution {solution}')
 
     await send_telemtry()
@@ -345,6 +355,11 @@ async def set_controller_gains(id, pid_id, kp, ki, kd):
         
     #     server_logger.error(traceback.print_exc())
 
+# If the guess to the problem is correct, the function responds to the client that their answer is correct.
+async def check_correct(correct):
+    print("Sending to client: " + correct)
+    await socket_io.emit('check_correct', correct)
+    return "Sent"
 
 @socket_io.event
 async def torque_enable(id):
@@ -406,7 +421,6 @@ async def telemetry_service():
 
 telemetry_task:Optional[asyncio.Task] = None
 
-
 def start_telemetry():
     global loop
     global telemetry_task
@@ -414,8 +428,17 @@ def start_telemetry():
         telemetry_task.cancel()
     telemetry_task = loop.create_task(telemetry_service())
 
+# Responsible for toggling the leds for correct or incorrect guesses.
+def toggle_led(pin_num, sleep_time):
+    GPIO.output(pin_num,True)
+    time.sleep(sleep_time)
+    GPIO.output(pin_num,False)
 
 if __name__ == '__main__':
+    # Pin used or LEDs
+    GPIO.setmode(GPIO.BOARD)
+    GPIO.setup(11, GPIO.OUT)       # Correct(green) LED
+    GPIO.setup(12, GPIO.OUT)       # Incorrect(red) LED
     #bind the aiohttp endpoint to the web_application
     import argparse
     parser = argparse.ArgumentParser()

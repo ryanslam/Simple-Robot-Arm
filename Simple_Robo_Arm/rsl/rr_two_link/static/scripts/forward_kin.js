@@ -13,3 +13,12 @@ function set_joint_position() {
         socket.emit("set_joint_position", use_traj, traj_time, t1, t2);
     }
 }
+
+function workspace_demo() {
+    console.log("Client sending command WORKSPACE_DEMO")
+    theta_1_min = document.getElementById("theta_1_min_workspace").value
+    theta_1_max = document.getElementById("theta_1_max_workspace").value
+    theta_2_min = document.getElementById("theta_2_min_workspace").value
+    theta_2_max = document.getElementById("theta_2_max_workspace").value
+    socket.emit("workspace_demo", theta_1_min, theta_1_max, theta_2_min, theta_2_max);
+}

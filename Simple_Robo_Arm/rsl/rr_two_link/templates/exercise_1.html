@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8">
         <title>Forward Kinematic Exercise</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+        <link rel="stylesheet" href="/Users/ryanshiaulam/Desktop/Simple-Robot-Arm/Simple_Robo_Arm/rsl/rr_two_link/static/css/exercise_layout.css">
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
         <script>
@@ -18,10 +18,30 @@
             });
             </script>
     </head>
+    <script>
+        test_correct = () =>{
+            document.getElementById("guess_fieldset").style.backgroundColor = "green";
+            document.getElementById("guessed_solution").innerHTML = "Your guess is: Correct!";
+        }
+    </script>
     <body>
         <!-- Scripts used for the commands. -->
         <script src="{{url_for('static', filename = 'scripts/utility.js')}}"></script>
-        <script src="{{url_for('static', filename = 'scripts/forward_kin.js')}}"></script>
+        <script src="{{url_for('static', filename = 'scripts/forward_kin.js')}}"></script> 
+
+        <script>
+            socket.on("check_correct", (correct, callback)=>{
+                if (correct){
+                    document.getElementById("guessed_solution").style.color = "green";
+                    document.getElementById("guessed_solution").innerHTML = "Current guess is: Correct!";
+                }
+                else{
+                    document.getElementById("guessed_solution").style.color = "red";
+                    document.getElementById("guessed_solution").innerHTML = "Current guess is: Incorrect :(";
+                }
+                callback("Message Received");
+            });
+        </script>
 
         <h1 class="center">Forward Kinematic Example</h1>
         <div class="video_container">
@@ -62,7 +82,17 @@
                 <input name="y_forward_kinematic_guess" type="number" id="y_forward_kinematic_guess" value="", min="-800" max="800"> (mm)
                 <br>
                 <button class="button" onClick="set_joint_position()">SET JOINT POSITION</button>
-            </fieldset>
+                <button class="button" onClick="test_correct()"> Test Correct </button>
+            </fieldset>  
         </fieldset>
+        
+        <div>
+            <fieldset id="command_window">
+                <legend>GUESSED SOLUTION:</legend>
+                <fieldset id="guess_fieldset">
+                    <h1 id="guessed_solution"></h1>
+                </fieldset>
+            </fieldset>
+        </div>
     </body>
 </html>

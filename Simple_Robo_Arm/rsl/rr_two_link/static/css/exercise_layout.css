@@ -74,3 +74,12 @@ color: white;
     border: solid 1px #ccc;
     border-radius: 4px;
 }
+
+.guess_fieldset{
+    font-size: 25px;
+    font-weight: bold;
+}
+
+#guessed_solution{
+    color: white
+}
