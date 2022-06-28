@@ -44,6 +44,8 @@ socket_io = socketio.AsyncServer(cors_allowed_origins='*')  # async_mode='`aioht
 web_app = aiohttp.web.Application()
 routes = aiohttp.web.RouteTableDef()
 
+static_folder_path = './static'
+
 # bind the socket.io server to the aiohttp.web application instance
 socket_io.attach(web_app)
 
@@ -474,6 +476,14 @@ if __name__ == '__main__':
         # web_app.router.add_get('/', master)
         # web_app.router.add_get('/', assignment_1)
         # web_app.router.add_get('/video_feed', video_feed)
+
+        # Routing the static folder to be used for js, css, and images.
+        web_app.add_routes(routes.static('/static',
+                                            static_folder_path, 
+                                            show_index=True,
+                                            follow_symlinks=True,
+                                            append_version=True))
+
         cam = camera.CameraWrapper(framerate=32)
         cam.start_video()
         aiohttp.web.run_app(web_app)
