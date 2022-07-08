@@ -292,12 +292,12 @@ async def set_joint_position(id, use_traj:bool, traj_time:str, t1:str, t2:str, x
             # If correct, shine green LED.
             toggle_led(11, 5)
             server_logger.info(f'Forward kinematics solution guess was correct! Solution: {solution}')
-            check_correct(True)
+            await check_correct('True')
         else:
             # If incorrect, shine red LED.
             toggle_led(12, 5)
             server_logger.info(f'Forward kinematics solution guess was incorrect! Correct solution {solution}')
-            check_correct(True)
+            await check_correct('False')
     await send_telemtry()
 
 
@@ -477,13 +477,12 @@ if __name__ == '__main__':
         # web_app.router.add_get('/video_feed', video_feed)
 
         # Routing the static folder to be used for js, css, and images.
-        web_app.add_routes(routes.static('/static',
-                                            static_folder_path, 
-                                            show_index=True,
-                                            follow_symlinks=True,
-                                            append_version=True))
+        # web_app.add_routes(routes.static('/static',
+        #                                     static_folder_path, 
+        #                                     show_index=True,
+        #                                     follow_symlinks=True))
 
-        cam = camera.CameraWrapper(framerate=32)
+        cam = camera.CameraWrapper(framerate=60)
         cam.start_video()
         aiohttp.web.run_app(web_app)
     finally:
