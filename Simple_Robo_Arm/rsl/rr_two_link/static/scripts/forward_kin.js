@@ -20,5 +20,10 @@ function workspace_demo() {
     theta_1_max = document.getElementById("theta_1_max_workspace").value
     theta_2_min = document.getElementById("theta_2_min_workspace").value
     theta_2_max = document.getElementById("theta_2_max_workspace").value
-    socket.emit("workspace_demo", theta_1_min, theta_1_max, theta_2_min, theta_2_max);
+    if(parseFloat(theta_1_max) > 100 || parseFloat(theta_1_min) < -100 || parseFloat(theta_2_max) > 100|| parseFloat(theta_2_min) < 100){
+        document.getElementById("guessed_solution").innerHTML = "Error, the max and minimum values lie within the range of (-100,100)";
+    }
+    else{
+        socket.emit("workspace_demo", theta_1_min, theta_1_max, theta_2_min, theta_2_max);
+    }
 }

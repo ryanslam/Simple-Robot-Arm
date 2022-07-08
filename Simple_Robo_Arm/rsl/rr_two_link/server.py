@@ -99,14 +99,6 @@ async def master(request):
     with open(filename) as file_obj:
         return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
 
-
-@routes.get('/assignment_1')
-async def assignment_1(request):
-    path_to_this_file = os.path.dirname(os.path.abspath(__file__))
-    filename = os.path.join(path_to_this_file, 'templates/assignment_1.html')
-    with open(filename) as file_obj:
-        return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
-
 @routes.get('/exercise_1')
 async def exercise_1(request):
     path_to_this_file = os.path.dirname(os.path.abspath(__file__))
@@ -118,6 +110,13 @@ async def exercise_1(request):
 async def exercise_2(request):
     path_to_this_file = os.path.dirname(os.path.abspath(__file__))
     filename = os.path.join(path_to_this_file, 'templates/exercise_2.html')
+    with open(filename) as file_obj:
+        return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
+
+@routes.get('/dynamics_coupling')
+async def assignment_1(request):
+    path_to_this_file = os.path.dirname(os.path.abspath(__file__))
+    filename = os.path.join(path_to_this_file, 'templates/dynamics_coupling.html')
     with open(filename) as file_obj:
         return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
 
@@ -192,7 +191,7 @@ async def workspace_demo(id, theta_1_min, theta_1_max, theta_2_min, theta_2_max)
     resolution = math.pi/8
     sleep_time = 0.125
     try:
-        robot_arm.set_joint_pose((theta_1, -theta_2_min))
+        robot_arm.set_joint_pose((theta_1, -float(theta_2_min)))
         await asyncio.sleep(1.5)
         direction = 1
         while not robot_arm._actuators[0].near_max_position and theta_1 < robot_arm._actuators[0].max_theta:
