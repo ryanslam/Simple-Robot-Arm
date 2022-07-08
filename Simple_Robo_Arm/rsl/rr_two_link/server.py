@@ -147,8 +147,10 @@ async def controls_refresher(id):
 
     robot_arm.set_control_mode(ControlTypes.ACTUATOR_POSITION_CONTROL)
     
-    robot_arm.set_motor_gains(0, 125, 0)
-    robot_arm.set_motor_gains(1, 125, 0)
+    #robot_arm.set_motor_gains(0, 125, 0)
+    #robot_arm.set_motor_gains(1, 125, 0)
+    robot_arm.set_motor_gains(0, 80, 0)
+    robot_arm.set_motor_gains(1, 80, 0)
     if not robot_arm.on:
         robot_arm.torque_enable()
 
@@ -157,20 +159,28 @@ async def controls_refresher(id):
 
     robot_arm.set_joint_pose((math.pi/2, 0))
     await asyncio.sleep(1)
-    robot_arm.set_joint_pose((0, 0))
+    # Originally (0,0)
+    robot_arm.set_joint_pose((-math.pi/2, 0))
     await asyncio.sleep(1)
 
-    robot_arm.set_motor_gains(0, 80, 0)
-    robot_arm.set_joint_pose((math.pi/2, 0))
-    await asyncio.sleep(1)
-    robot_arm.set_joint_pose((0, 0))
-    await asyncio.sleep(1)
-    
+    # Originally gain = 80
     robot_arm.set_motor_gains(0, 40, 0)
     robot_arm.set_joint_pose((math.pi/2, 0))
     await asyncio.sleep(1)
-    robot_arm.set_joint_pose((0, 0))
+    # Originally (0,0)
+    robot_arm.set_joint_pose((-math.pi/2, 0))
     await asyncio.sleep(1)
+
+    # Originally gain = 40
+    robot_arm.set_motor_gains(0, 20, 0)
+    robot_arm.set_joint_pose((math.pi/2, 0))
+    await asyncio.sleep(1)
+    # Originally (0,0)
+    robot_arm.set_joint_pose((-math.pi/2, 0))
+    await asyncio.sleep(1)
+    
+    robot_arm.set_joint_pose((0,0))
+    robot_arm.set_motor_gains(0, 100, 0)
 
     robot_arm.doing_demo = False
 
@@ -355,6 +365,41 @@ async def set_controller_gains(id, pid_id, kp, ki, kd):
     # except:
         
     #     server_logger.error(traceback.print_exc())
+
+# Jacobian demo
+@socket_io.event
+async def jacobian_demo(id):
+    server_logger.info(f'Received doing Jacobian Demo command from id {id}')
+    if robot_arm.doing_demo:
+        server_logger.warning('Robot is already doing a demo.')
+        return
+    robot_arm.doing_demo = True
+
+    robot_arm.set_control_mode(ControlTypes.ACTUATOR_POSITION_CONTROL)
+    robot_arm.set_motor_gains(0, 80, 0)
+    robot_arm.set_motor_gains(1, 80, 0)
+    if not robot_arm.on:
+        robot_arm.torque_enable()
+
+    robot_arm.set_joint_pose((math.pi/2, 0))
+    await asyncio.sleep(1)
+    # Originally (0,0)
+    robot_arm.set_joint_pose((-math.pi/2, 0))
+    await asyncio.sleep(1)
+
+    robot_arm.set_joint_pose((math.pi/2, 0))
+    await asyncio.sleep(1)
+    # Originally (0,0)
+    robot_arm.set_joint_pose((-math.pi/2, 0))
+    await asyncio.sleep(1)
+
+    robot_arm.set_joint_pose((math.pi/2, 0))
+    await asyncio.sleep(1)
+    # Originally (0,0)
+    robot_arm.set_joint_pose((-math.pi/2, 0))
+    await asyncio.sleep(1)
+
+    robot_arm.doing_demo = False
 
 # If the guess to the problem is correct, the function responds to the client that their answer is correct.
 async def check_correct(correct):
