@@ -3,8 +3,8 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>Forward Kinematic Exercise</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+        <title>Inverse Kinematic Exercise</title>
+        <link href="/static/css/exercise_layout.css" rel="stylesheet">
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
         <script>
@@ -19,8 +19,22 @@
             </script>
     </head>
     <body>
-        <script src="{{url_for('static', filename = 'scripts/utility.js')}}"></script>
-        <script src="{{url_for('static', filename = 'scripts/inverse_kin.js')}}"></script>
+        <script src="/static/scripts/utility.js"></script>
+        <script src="/static/scripts/inverse_kin.js"></script>
+
+        <script>
+            socket.on("check_correct", (correct, callback)=>{
+                var bool_var = (correct.toLowerCase() === 'true');
+                if (bool_var){
+                    document.getElementById("guessed_solution").style.color = "green";
+                    document.getElementById("guessed_solution").innerHTML = "Current guess is: Correct!";
+                }
+                else{
+                    document.getElementById("guessed_solution").style.color = "red";
+                    document.getElementById("guessed_solution").innerHTML = "Current guess is: Incorrect :(";
+                }
+            });
+        </script>
 
         <h1 class="center">Inverse Kinematics Exercise</h1>
         <div class="video_container">
@@ -65,6 +79,16 @@
                 <br>
                 <button class="button" onClick="set_cartesian_position()">SET CARTESIAN POSITION</button>
             </fieldset>
+            <div>
+                <fieldset id="command_window">
+                    <legend>GUESSED SOLUTION:</legend>
+                    <div  class="guess_fieldset">
+                        <fieldset>
+                            <h1 id="guessed_solution"></h1>
+                        </fieldset>
+                    </div>
+                </fieldset>
+            </div>
         </fieldset>
     </body>
 </html>

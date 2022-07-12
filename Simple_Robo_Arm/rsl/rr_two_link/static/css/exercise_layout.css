@@ -78,6 +78,7 @@ color: white;
 .guess_fieldset{
     font-size: 25px;
     font-weight: bold;
+    background-color: white;
 }
 
 #guessed_solution{

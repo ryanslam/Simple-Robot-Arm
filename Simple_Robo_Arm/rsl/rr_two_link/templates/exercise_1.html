@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8">
         <title>Forward Kinematic Exercise</title>
-        <link rel="stylesheet" href="/Users/ryanshiaulam/Desktop/Simple-Robot-Arm/Simple_Robo_Arm/rsl/rr_two_link/static/css/exercise_layout.css">
+        <link href="/static/css/exercise_layout.css" rel="stylesheet">
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
         <script>
@@ -18,66 +18,10 @@
             });
             </script>
     </head>
-    <script>
-        test_correct = () =>{
-            document.getElementById("guess_fieldset").style.backgroundColor = "green";
-            document.getElementById("guessed_solution").innerHTML = "Your guess is: Correct!";
-        }
-    </script>
     <body>
         <!-- Scripts used for the commands. -->
-        <script>
-            function reconnect_motors() {
-                console.log("Client sending command RECONNECT_MOTORS")
-                socket.emit("reconnect_motors")
-            }
-
-            function go_home() {
-                console.log("Client sending command GO_HOME")
-                socket.emit("home");
-            }
-
-            function disable_torque() {
-                console.log("Client sending command DISABLE_TORQUE")
-                socket.emit("torque_disable");
-            }
-
-            function enable_torque() {
-                console.log("Client sending command ENABLE_TORQUE")
-                socket.emit("torque_enable")
-            }
-        </script>
-        <script>
-            function set_joint_position() {
-                console.log("Client sending command MOVE_JOINTS_ABSOLUTE")
-                t1 = document.getElementById("theta1").value
-                t2 = document.getElementById("theta2").value
-                guessing_solution = document.getElementById("check_forward_kinematic_solution").checked
-                use_traj = document.getElementById("use_joint_traj").checked
-                traj_time = document.getElementById("joint_traj_time").value
-                if (guessing_solution){
-                    x_guess = document.getElementById("x_forward_kinematic_guess").value
-                    y_guess = document.getElementById("y_forward_kinematic_guess").value
-                    socket.emit("set_joint_position", use_traj, traj_time, t1, t2, x_guess, y_guess);
-                }else{
-                    socket.emit("set_joint_position", use_traj, traj_time, t1, t2);
-                }
-            }
-
-            function workspace_demo() {
-                console.log("Client sending command WORKSPACE_DEMO")
-                theta_1_min = document.getElementById("theta_1_min_workspace").value
-                theta_1_max = document.getElementById("theta_1_max_workspace").value
-                theta_2_min = document.getElementById("theta_2_min_workspace").value
-                theta_2_max = document.getElementById("theta_2_max_workspace").value
-                if(parseFloat(theta_1_max) > 100 || parseFloat(theta_1_min) < -100 || parseFloat(theta_2_max) > 100|| parseFloat(theta_2_min) < 100){
-                    document.getElementById("guessed_solution").innerHTML = "Error, the max and minimum values lie within the range of (-100,100)";
-                }
-                else{
-                    socket.emit("workspace_demo", theta_1_min, theta_1_max, theta_2_min, theta_2_max);
-                }
-            }
-        </script>
+        <script src="/static/scripts/utility.js"></script>
+        <script src="/static/scripts/forward_kin.js"></script>
 
         <script>
             socket.on("check_correct", (correct, callback)=>{
@@ -90,7 +34,6 @@
                     document.getElementById("guessed_solution").style.color = "red";
                     document.getElementById("guessed_solution").innerHTML = "Current guess is: Incorrect :(";
                 }
-                callback("Message Received");
             });
         </script>
 
@@ -111,6 +54,10 @@
                 <button class="button" onClick="go_home()">GO HOME</button>
                 <button class="button" onClick="reconnect_dynamixel()">RECONNECT TO DYNAMIXEL</button>
             </fieldset>
+            <fieldset>
+                <legend>CONTROLS REFRESHER DEMO</legend>
+                <button class="button" onClick="controls_refresher_demo()">CONTROLS REFRESHER DEMO</button>
+            </fieldset>    
             <fieldset>
                 <legend>WORKSPACE DEMONSTRATION</legend>
                 <label for="theta_1_min_workspace">Theta1 (min, max)</label>
@@ -145,16 +92,17 @@
                 <input name="y_forward_kinematic_guess" type="number" id="y_forward_kinematic_guess" value="", min="-800" max="800"> (mm)
                 <br>
                 <button class="button" onClick="set_joint_position()">SET JOINT POSITION</button>
-                <button class="button" onClick="test_correct()"> Test Correct </button>
             </fieldset>  
         </fieldset>
         
         <div>
             <fieldset id="command_window">
                 <legend>GUESSED SOLUTION:</legend>
-                <fieldset id="guess_fieldset">
-                    <h1 id="guessed_solution"></h1>
-                </fieldset>
+                <div  class="guess_fieldset">
+                    <fieldset>
+                        <h1 id="guessed_solution"></h1>
+                    </fieldset>
+                </div>
             </fieldset>
         </div>
     </body>

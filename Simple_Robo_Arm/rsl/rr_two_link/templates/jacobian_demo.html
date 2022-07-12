@@ -4,7 +4,7 @@
     <head>
         <meta charset="utf-8">
         <title>Forward Kinematic Exercise</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+        <link href="/static/css/exercise_layout.css" rel="stylesheet">
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
         <script>
@@ -20,35 +20,8 @@
     </head>
     <body>
         <!-- Need to correct the pathing/routing for static files.-->
-        <script>
-            function reconnect_motors() {
-                console.log("Client sending command RECONNECT_MOTORS")
-                socket.emit("reconnect_motors")
-            }
-
-            function go_home() {
-                console.log("Client sending command GO_HOME")
-                socket.emit("home");
-            }
-
-            function disable_torque() {
-                console.log("Client sending command DISABLE_TORQUE")
-                socket.emit("torque_disable");
-            }
-
-            function enable_torque() {
-                console.log("Client sending command ENABLE_TORQUE")
-                socket.emit("torque_enable")
-            }
-        </script>
-        <script>
-            function jacobian_demo() {
-                console.log("Client sending command JACOBIAN_DEMO")
-                theta2 = document.getElementById("theta_2_jacobian_demo").value
-                //socket.emit("jacobian_demo", theta2)
-                socket.emit("jacobian_demo", theta2)
-            }
-        </script>
+        <script src="/static/scripts/utility.js"></script>
+        <script src="/static/scripts/jacobian_demo.js"></script>
 
         <h1 class="center">JACOBIAN DEMONSTRATION</h1>
         <div class="video_container">
