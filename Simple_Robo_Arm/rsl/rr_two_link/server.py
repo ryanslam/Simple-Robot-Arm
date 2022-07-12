@@ -368,7 +368,7 @@ async def set_controller_gains(id, pid_id, kp, ki, kd):
 
 # Jacobian demo
 @socket_io.event
-async def jacobian_demo(id):
+async def jacobian_demo(id, theta2:str):
     server_logger.info(f'Received doing Jacobian Demo command from id {id}')
     if robot_arm.doing_demo:
         server_logger.warning('Robot is already doing a demo.')
@@ -381,22 +381,30 @@ async def jacobian_demo(id):
     if not robot_arm.on:
         robot_arm.torque_enable()
 
-    robot_arm.set_joint_pose((math.pi/2, 0))
+    robot_arm.set_joint_pose((0,0))
+    set_joint_position(id, True, t1='0', t2=theta2)
     await asyncio.sleep(1)
-    # Originally (0,0)
     robot_arm.set_joint_pose((-math.pi/2, 0))
+    await asyncio.sleep(1)
+    robot_arm.set_joint_pose((math.pi/2, 0))
     await asyncio.sleep(1)
 
-    robot_arm.set_joint_pose((math.pi/2, 0))
+    robot_arm.set_joint_pose((0,0))
+    theta2=str(int(theta2)+math.pi/2)
+    set_joint_position(id, True, t1='0', t2=theta2)
     await asyncio.sleep(1)
-    # Originally (0,0)
     robot_arm.set_joint_pose((-math.pi/2, 0))
+    await asyncio.sleep(1)
+    robot_arm.set_joint_pose((math.pi/2, 0))
     await asyncio.sleep(1)
 
-    robot_arm.set_joint_pose((math.pi/2, 0))
+    robot_arm.set_joint_pose((0,0))
+    theta2=str(int(theta2)+math.pi/2)
+    set_joint_position(id, True, t1='0', t2=theta2)
     await asyncio.sleep(1)
-    # Originally (0,0)
     robot_arm.set_joint_pose((-math.pi/2, 0))
+    await asyncio.sleep(1)
+    robot_arm.set_joint_pose((math.pi/2, 0))
     await asyncio.sleep(1)
 
     robot_arm.doing_demo = False
