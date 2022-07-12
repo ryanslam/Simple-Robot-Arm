@@ -389,24 +389,6 @@ async def jacobian_demo(id, theta2:str):
     robot_arm.set_joint_pose((math.pi/2, 0))
     await asyncio.sleep(1)
 
-    robot_arm.set_joint_pose((0,0))
-    theta2=str(int(theta2)+math.pi/2)
-    set_joint_position(id, True, t1='0', t2=theta2)
-    await asyncio.sleep(1)
-    robot_arm.set_joint_pose((-math.pi/2, 0))
-    await asyncio.sleep(1)
-    robot_arm.set_joint_pose((math.pi/2, 0))
-    await asyncio.sleep(1)
-
-    robot_arm.set_joint_pose((0,0))
-    theta2=str(int(theta2)+math.pi/2)
-    set_joint_position(id, True, t1='0', t2=theta2)
-    await asyncio.sleep(1)
-    robot_arm.set_joint_pose((-math.pi/2, 0))
-    await asyncio.sleep(1)
-    robot_arm.set_joint_pose((math.pi/2, 0))
-    await asyncio.sleep(1)
-
     robot_arm.doing_demo = False
 
 # If the guess to the problem is correct, the function responds to the client that their answer is correct.
