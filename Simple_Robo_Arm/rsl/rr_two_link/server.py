@@ -536,10 +536,10 @@ if __name__ == '__main__':
         # web_app.router.add_get('/video_feed', video_feed)
 
         # Routing the static folder to be used for js, css, and images.
-        # web_app.add_routes(routes.static('/static',
-        #                                     static_folder_path, 
-        #                                     show_index=True,
-        #                                     follow_symlinks=True))
+        web_app.add_routes(routes.static('/static',
+                                            static_folder_path, 
+                                            show_index=True,
+                                            follow_symlinks=True))
 
         cam = camera.CameraWrapper(framerate=60)
         cam.start_video()
