@@ -1,0 +1,78 @@
+<!-- Webpage for Dynamics Coupling Demo -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Forward Kinematic Exercise</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+        <script>
+            // < !-change the host if sending the message outside localhost ->
+            const socket = io("http://simple-robot-arm:8080",
+            {transports: ['websocket', 'polling', 'flashsocket']}
+            );
+    
+            socket.on("disconnect", function (){
+                console.log("Disconnected from server.")    // alert?
+            });
+            </script>
+    </head>
+    <body>
+        <!-- Need to correct the pathing/routing for static files.-->
+        <script>
+            function reconnect_motors() {
+                console.log("Client sending command RECONNECT_MOTORS")
+                socket.emit("reconnect_motors")
+            }
+
+            function go_home() {
+                console.log("Client sending command GO_HOME")
+                socket.emit("home");
+            }
+
+            function disable_torque() {
+                console.log("Client sending command DISABLE_TORQUE")
+                socket.emit("torque_disable");
+            }
+
+            function enable_torque() {
+                console.log("Client sending command ENABLE_TORQUE")
+                socket.emit("torque_enable")
+            }
+        </script>
+        <script>
+            function jacobian_demo() {
+                console.log("Client sending command JACOBIAN_DEMO")
+                theta2 = document.getElementById("theta_2_jacobian_demo").value
+                //socket.emit("jacobian_demo", theta2)
+                socket.emit("jacobian_demo", theta2)
+            }
+        </script>
+
+        <h1 class="center">JACOBIAN DEMONSTRATION</h1>
+        <div class="video_container">
+            <fieldset class="command_window">
+                <legend class="video_feed_text">Video Feed</legend>
+                <img id="video_feed", src="/video_feed">
+            </fieldset>
+        </div>
+        <br>
+        <fieldset class="command_window">
+            <legend class="video_feed_text">Commands</legend>
+            <fieldset class="command_window">
+                <legend>UTILITY</legend>
+               <button class="button" onClick="disable_torque()">MOTORS OFF</button>
+               <button class="button" onClick="enable_torque()">MOTORS ON</button>
+               <button class="button" onClick="go_home()">GO HOME</button>
+               <button class="button" onClick="reconnect_dynamixel()">RECONNECT TO DYNAMIXEL</button>
+            </fieldset>
+            <fieldset class="command_window">
+                <legend>JACOBIAN DEMONSTRATION</legend>
+                <button class="button" onClick="jacobian_demo()">JACOBIAN DEMO</button>
+                <label for="theta_2_jacobian_demo">Theta 2 position jacobian demo (deg):</label>
+                <input name="theta_2_jacobian_demo" type="number" id="theta_2_jacobian_demo" value="" min="-180" max="180">
+            </fieldset>
+        </fieldset>
+    </body>
+</html>

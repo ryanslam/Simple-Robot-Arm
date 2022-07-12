@@ -120,6 +120,13 @@ async def assignment_1(request):
     with open(filename) as file_obj:
         return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
 
+@routes.get('/jacobian')
+async def assignment_1(request):
+    path_to_this_file = os.path.dirname(os.path.abspath(__file__))
+    filename = os.path.join(path_to_this_file, 'templates/jacobian_demo.html')
+    with open(filename) as file_obj:
+        return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
+
 @socket_io.event
 async def connect(id, information):
     server_logger.info(f'Server connected to client id {id}.')
@@ -370,24 +377,41 @@ async def set_controller_gains(id, pid_id, kp, ki, kd):
 @socket_io.event
 async def jacobian_demo(id, theta2:str):
     server_logger.info(f'Received doing Jacobian Demo command from id {id}')
+    try:
+        float(theta2)
+    except ValueError:
+        return False
     if robot_arm.doing_demo:
         server_logger.warning('Robot is already doing a demo.')
         return
     robot_arm.doing_demo = True
 
     robot_arm.set_control_mode(ControlTypes.ACTUATOR_POSITION_CONTROL)
-    robot_arm.set_motor_gains(0, 80, 0)
-    robot_arm.set_motor_gains(1, 80, 0)
+    robot_arm.set_motor_gains(0, 100, 0)
+    robot_arm.set_motor_gains(1, 100, 0)
     if not robot_arm.on:
         robot_arm.torque_enable()
 
+    t2=math.radians(float(theta2))
+
+    robot_arm.set_joint_pose((-math.pi/2, t2))
+    await asyncio.sleep(1)
+    robot_arm.set_joint_pose((math.pi/2, t2)) 
+    await asyncio.sleep(1)
+
+    robot_arm.set_motor_gains(0, 80, 0)
+    robot_arm.set_joint_pose((math.pi/2, t2))
+    await asyncio.sleep(1)
+    robot_arm.set_joint_pose((-math.pi/2, t2))
+    await asyncio.sleep(1)
+
+    robot_arm.set_motor_gains(0, 40, 0)
+    robot_arm.set_joint_pose((math.pi/2, t2))
+    await asyncio.sleep(1)
+    robot_arm.set_joint_pose((-math.pi/2, t2))
+    await asyncio.sleep(1)
+    robot_arm.set_motor_gains(0, 100, 0)
     robot_arm.set_joint_pose((0,0))
-    set_joint_position(id, True, t1='0', t2=theta2)
-    await asyncio.sleep(1)
-    robot_arm.set_joint_pose((-math.pi/2, 0))
-    await asyncio.sleep(1)
-    robot_arm.set_joint_pose((math.pi/2, 0))
-    await asyncio.sleep(1)
 
     robot_arm.doing_demo = False
 
