@@ -176,6 +176,7 @@
             theta_2_min = document.getElementById("theta_2_min_workspace").value
             theta_2_max = document.getElementById("theta_2_max_workspace").value
             socket.emit("workspace_demo", theta_1_min, theta_1_max, theta_2_min, theta_2_max);
+            // socket.emit("workspace_demo");
         }
         
         function jacobian_demo() {

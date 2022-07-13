@@ -606,13 +606,18 @@ class DynamixelServoWrapper:
             start_time = time.monotonic()
             self.set_theta(target_theta)
             while 1:
+                self.logger.error(f'In loop')
                 error = abs(target_theta - self.theta)
-                if error < math.radians(5): break
+                if error < math.radians(5): 
+                    self.logger.debug(f'break')
+                    break
                 if time.monotonic() - start_time > 5: 
                     self.logger.error(f'Sweep initial movement has timed out. \
                         Latest angle: {util.prettify_radians(self.latest_state.position)}, age {self.latest_state.age} sec, \
                         theta: {util.prettify_radians(self.theta)}, min: {util.prettify_radians(self.min_theta)}, max: {util.prettify_radians(self.max_theta)}')
+
                     raise asyncio.CancelledError
+                    
                 await asyncio.sleep(0.5)
 
             self.logger.debug(f'Sweep has arrived near to the initial position')
