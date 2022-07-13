@@ -193,7 +193,7 @@ async def controls_refresher(id):
 
 
 @socket_io.event
-async def workspace_demo(id, theta_1_min, theta_1_max, theta_2_min, theta_2_max):
+async def workspace_demo(id):
     server_logger.info(f'Received WORKSPACE_DEMO command from id {id}')
 
     if robot_arm.doing_demo:
@@ -204,27 +204,59 @@ async def workspace_demo(id, theta_1_min, theta_1_max, theta_2_min, theta_2_max)
     robot_arm.set_control_mode(ControlTypes.ACTUATOR_POSITION_CONTROL)
     robot_arm.set_motor_gains(0, 80, 0)
     robot_arm.set_motor_gains(1, 80, 0)
-    theta_1 = math.radians(float(theta_1_min))
-    resolution = math.pi/8
-    sleep_time = 0.125
+    robot_arm.set_joint_pose((-math.pi/2, 0))
     try:
-        robot_arm.set_joint_pose((theta_1, -float(theta_2_min)))
         await asyncio.sleep(1.5)
-        direction = 1
-        while not robot_arm._actuators[0].near_max_position and theta_1 < robot_arm._actuators[0].max_theta:
-            await robot_arm._actuators[1].discrete_sweep(direction, resolution, sleep_time)
-            robot_arm._actuators[0].set_theta(theta_1)
-            await asyncio.sleep(sleep_time)
-            theta_1 += resolution
-            direction *= -1
-
-        robot_arm._actuators[0].set_theta(robot_arm._actuators[0].max_theta)
-        await robot_arm._actuators[1].discrete_sweep(direction, resolution, sleep_time)
+        for t1 in range(-2, 3, -1):
+            robot_arm.set_joint_pose((0,0))
+            await asyncio.sleep(1.5)
+            if not(t1 == 0 and abs(t1) == 1):
+                robot_arm.set_joint_pose((math.pi/t1, 2*math.pi))
+                await asyncio.sleep(1.5)
+            elif not(t1 == 0):
+                robot_arm.set_joint_pose((math.pi/(t1*4), 2*math.pi))
+                await asyncio.sleep(1.5)
+            else:
+                robot_arm.set_joint_pose((0, 2*math.pi))
+                await asyncio.sleep(1.5)
     finally:
         robot_arm.logger.info("Workspace demo has concluded.")
         await asyncio.sleep(0.5)
         robot_arm.set_joint_pose((0, 0))
         robot_arm.doing_demo = False
+
+# async def workspace_demo(id, theta_1_min, theta_1_max, theta_2_min, theta_2_max):
+#     server_logger.info(f'Received WORKSPACE_DEMO command from id {id}')
+
+#     if robot_arm.doing_demo:
+#         robot_arm.logger.error(f'Cannot do WORKSPACE_DEMO while another demo is active.')
+#         return
+#     robot_arm.logger.info('Begin workspace demo')
+#     robot_arm.doing_demo = True
+#     robot_arm.set_control_mode(ControlTypes.ACTUATOR_POSITION_CONTROL)
+#     robot_arm.set_motor_gains(0, 80, 0)
+#     robot_arm.set_motor_gains(1, 80, 0)
+#     theta_1 = math.radians(float(theta_1_min))
+#     resolution = math.pi/8
+#     sleep_time = 0.125
+#     try:
+#         robot_arm.set_joint_pose((theta_1, -float(theta_2_min)))
+#         await asyncio.sleep(1.5)
+#         direction = 1
+#         while not robot_arm._actuators[0].near_max_position and theta_1 < robot_arm._actuators[0].max_theta:
+            # await robot_arm._actuators[1].discrete_sweep(direction, resolution, sleep_time)
+#             robot_arm._actuators[0].set_theta(theta_1)
+#             await asyncio.sleep(sleep_time)
+#             theta_1 += resolution
+#             direction *= -1
+
+#         robot_arm._actuators[0].set_theta(robot_arm._actuators[0].max_theta)
+#         await robot_arm._actuators[1].discrete_sweep(direction, resolution, sleep_time)
+#     finally:
+#         robot_arm.logger.info("Workspace demo has concluded.")
+#         await asyncio.sleep(0.5)
+#         robot_arm.set_joint_pose((0, 0))
+#         robot_arm.doing_demo = False
 
 
 @socket_io.event
