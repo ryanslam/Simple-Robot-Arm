@@ -82,5 +82,5 @@ color: white;
 }
 
 #guessed_solution{
-    color: white
+    color: red;
 }
