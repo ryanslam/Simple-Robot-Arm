@@ -1,16 +1,15 @@
 <!-- Webpage for Dynamics Coupling Demo -->
 <!DOCTYPE html>
 <html lang="en">
-    <style>
-    </style>
     <head>
         <meta charset="utf-8">
-        <title>Dynamics Coupling</title>
+        <title>Forward Kinematic Exercise</title>
         <link href="/static/css/exercise_layout.css" rel="stylesheet">
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
         <!-- CSS for Boostrap. -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
         <script>
             // < !-change the host if sending the message outside localhost ->
             const socket = io("http://simple-robot-arm:8080",
@@ -55,20 +54,11 @@
               </ul>
             </div>
         </nav>
+
         <!-- Need to correct the pathing/routing for static files.-->
         <script src="/static/scripts/utility.js"></script>
         <script src="/static/scripts/dynamics_coupling_demo.js"></script>
-        <script>
-            function dynamics_coupling_demo() {
-                console.log("Client sending command DYNAMICS_COUPLING_DEMO")
-                socket.emit("dynamics_coupling_demo")
-            }
-    
-            function dynamics_time_varying_demo() {
-                console.log("Client sending command DYNAMICS_TIME_VARYING_DEMO")
-                socket.emit("dynamics_time_varying_demo")
-            }
-        </script>
+
 
         <h1 class="center">Dynamics Coupling Demonstration</h1>
         <div class="video_container">
@@ -93,7 +83,7 @@
                 <button class="button" onClick="dynamics_time_varying_demo()">DYNAMICS TIME VARYING DEMO</button>
             </fieldset>
         </fieldset>
-        {% comment %} Scripts for Bootstrap. {% endcomment %}
+        <!-- Scripts for Bootstrap. -->
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
