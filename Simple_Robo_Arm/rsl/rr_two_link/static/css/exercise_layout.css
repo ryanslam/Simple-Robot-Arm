@@ -84,3 +84,9 @@ color: white;
 #guessed_solution{
     color: red;
 }
+
+.navbar{
+    text-align: center;
+    padding: 10rem;
+    border-bottom: 4px solid black;
+}

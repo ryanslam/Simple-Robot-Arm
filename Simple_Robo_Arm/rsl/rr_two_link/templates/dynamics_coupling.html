@@ -1,9 +1,11 @@
 <!-- Webpage for Dynamics Coupling Demo -->
 <!DOCTYPE html>
 <html lang="en">
+    <style>
+    </style>
     <head>
         <meta charset="utf-8">
-        <title>Forward Kinematic Exercise</title>
+        <title>Dynamics Coupling</title>
         <link href="/static/css/exercise_layout.css" rel="stylesheet">
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
@@ -21,6 +23,38 @@
             </script>
     </head>
     <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">Robotics I&II</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+          
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="http://simple-robot-arm:8080/">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Demonstrations
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="http://simple-robot-arm:8080/jacobian">Jacobian</a>
+                      <a class="dropdown-item" href="http://simple-robot-arm:8080/dynamics_coupling">Dynamics Coupling</a>
+                    </div>
+                  </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Exercises
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                      <a class="dropdown-item" href="http://simple-robot-arm:8080/exercise_1">Forward Kinematics</a>
+                      <a class="dropdown-item" href="http://simple-robot-arm:8080/exercise_2">Inverse Kinematics</a>
+                    </div>
+                </li>
+              </ul>
+            </div>
+        </nav>
         <!-- Need to correct the pathing/routing for static files.-->
         <script src="/static/scripts/utility.js"></script>
         <script src="/static/scripts/dynamics_coupling_demo.js"></script>
