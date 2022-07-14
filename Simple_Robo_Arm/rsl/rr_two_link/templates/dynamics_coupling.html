@@ -71,16 +71,28 @@
           <div class="container jumbotron">
             <h1>Commands</h1>
             <div class="row-md-3">
-              <legend>UTILITY</legend>
-              <button class="button" onClick="disable_torque()">MOTORS OFF</button>
-              <button class="button" onClick="enable_torque()">MOTORS ON</button>
-              <button class="button" onClick="go_home()">GO HOME</button>
-              <button class="button" onClick="reconnect_dynamixel()">RECONNECT TO DYNAMIXEL</button>
+              <div class="container">
+                <div class="col">
+                  <h5>Utility</h5>
+                </div>
+                <div class="col">
+                  <button type="button" class="btn btn-secondary btn-sm" onClick="disable_torque()">MOTORS OFF</button>
+                  <button type="button" class="btn btn-secondary btn-sm" onClick="enable_torque()">MOTORS ON</button>
+                  <button type="button" class="btn btn-secondary btn-sm" onClick="go_home()">GO HOME</button>
+                  <button type="button" class="btn btn-secondary btn-sm" onClick="reconnect_dynamixel()">RECONNECT TO DYNAMIXEL</button>
+                </div>
+              </div>
           </div>
+          <br>
+          <br>
           <div class="row-md-3">
-            <legend>DYNAMICS COUPLING DEMONSTRATION</legend>
-            <button class="button" onClick="dynamics_coupling_demo()">DYNAMICS COUPLING DEMO</button>
-            <button class="button" onClick="dynamics_time_varying_demo()">DYNAMICS TIME VARYING DEMO</button>
+            <div class="container">
+              <div class="col">
+                <h5>Dynamics Coupling Demonstration</h5>
+                <button type="button" class="btn btn-secondary btn-sm" onClick="dynamics_coupling_demo()">DYNAMICS COUPLING DEMO</button>
+                <button type="button" class="btn btn-secondary btn-sm" onClick="dynamics_time_varying_demo()">DYNAMICS TIME VARYING DEMO</button>
+              </div>
+            </div>
           </div>
         </div>
         <!-- Scripts for Bootstrap. -->
