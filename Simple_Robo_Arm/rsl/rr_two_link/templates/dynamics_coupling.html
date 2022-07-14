@@ -59,30 +59,33 @@
         <script src="/static/scripts/utility.js"></script>
         <script src="/static/scripts/dynamics_coupling_demo.js"></script>
 
-
-        <h1 class="center">Dynamics Coupling Demonstration</h1>
-        <div class="video_container">
-            <fieldset class="command_window">
-                <legend class="video_feed_text">Video Feed</legend>
-                <img id="video_feed", src="/video_feed">
-            </fieldset>
-        </div>
-        <br>
-        <fieldset class="command_window">
-            <legend class="video_feed_text">Commands</legend>
-            <fieldset class="command_window">
+        <div class="bg-secondary">
+          <h1 class="center">Dynamics Coupling Demonstration</h1>
+          <div class="video_container">
+              <fieldset class="command_window">
+                  <legend class="video_feed_text">Video Feed</legend>
+                  <img id="video_feed", src="/video_feed">
+              </fieldset>
+          </div>
+          <br>
+          <div class="container bg-light">
+            <div class="row-md-3">
+              <legend class="video_feed_text">Commands</legend>
+            </div>
+            <div class="row-md-3">
                 <legend>UTILITY</legend>
-               <button class="button" onClick="disable_torque()">MOTORS OFF</button>
-               <button class="button" onClick="enable_torque()">MOTORS ON</button>
-               <button class="button" onClick="go_home()">GO HOME</button>
-               <button class="button" onClick="reconnect_dynamixel()">RECONNECT TO DYNAMIXEL</button>
-            </fieldset>
-            <fieldset class="command_window">
-                <legend>DYNAMICS COUPLING DEMONSTRATION</legend>
-                <button class="button" onClick="dynamics_coupling_demo()">DYNAMICS COUPLING DEMO</button>
-                <button class="button" onClick="dynamics_time_varying_demo()">DYNAMICS TIME VARYING DEMO</button>
-            </fieldset>
-        </fieldset>
+                <button class="button" onClick="disable_torque()">MOTORS OFF</button>
+                <button class="button" onClick="enable_torque()">MOTORS ON</button>
+                <button class="button" onClick="go_home()">GO HOME</button>
+                <button class="button" onClick="reconnect_dynamixel()">RECONNECT TO DYNAMIXEL</button>
+            </div>
+            <div class="row-md-3">
+              <legend>DYNAMICS COUPLING DEMONSTRATION</legend>
+              <button class="button" onClick="dynamics_coupling_demo()">DYNAMICS COUPLING DEMO</button>
+              <button class="button" onClick="dynamics_time_varying_demo()">DYNAMICS TIME VARYING DEMO</button>
+            </div>
+          </div>
+        </div>
         <!-- Scripts for Bootstrap. -->
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
