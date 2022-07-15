@@ -1,6 +1,9 @@
 * {
-    box-sizing: border-box
+    font-family: 'Open Sans', sans-serif;
+    box-sizing: border-box;
+    color: rgba(253, 253, 253, 1);
 }
+
 body {
     /* color: whitesmoke; */
     /* background-color: #585858  */
