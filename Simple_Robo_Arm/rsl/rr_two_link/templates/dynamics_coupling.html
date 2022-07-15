@@ -68,7 +68,7 @@
         <script src="/static/scripts/dynamics_coupling_demo.js"></script>
 
         <!--Start of the Dynamics Coupling Section-->
-        <div class="bg-secondary">
+        <!--<div class="bg-secondary bg-gradient">-->
           <div class="container">
             <br>
             <h1 class="text-center text-light"><u>Dynamics Coupling Demonstration</u></h1>
@@ -78,11 +78,13 @@
               <!--<fieldset class="command_window bg-light">-->
                 <h1 class="video_feed_text">Video Feed</h1>
                 <!--<div class="embed-responsive embed-responsive-21by9">-->
-                  <div class="text-center">
-                  <img id="video_feed text-center", src="/video_feed">
-                  <!--<iframe class="embed-responsive-item" src="/video_feed"></iframe>-->
+                <div class="text-center">
+                  <!--<img id="video_feed text-center", src="/video_feed">-->
+                    <iframe class="embed-responsive-item" src="/video_feed" width="485" height="485"></iframe>
+
+                </div>
                   <!--<img id="video_feed", src="/video_feed">-->
-              </fieldset>
+              <!--</fieldset>-->
           </div>
           <br>
           <div class="container jumbotron">
@@ -113,7 +115,7 @@
                 </div>
                 <div class="container">
                   <div class="row">
-                    <div class="col">
+                    <div class="col justify-content-center">
                       <h1>Telemetry</h1>
                       <div class="card" style="width: 18rem;">
                         <small id="motor_0_enabled">Motor 0:</small>
@@ -127,18 +129,16 @@
                       </div>
                       <p>Link lengths: (200, 200) mm</h3>
                     </div>
-                    <div class="col">
+                    <div class="col justify-content-center">
                       <h1>Activity Log</h1>
-                      <div class="card" style="width: 18rem;">
-                        <div class="card log_window" id="log_window" style="width: 18rem;">
-                      </div>
+                        <div class="log_window bg-light" id="log_window"></div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
+        <!--</div>-->
         <!-- https://mdbootstrap.com/docs/standard/navigation/footer/examples-and-customization/ -->
         <footer class="bg-dark text-center text-white">
           <!-- Grid container -->

@@ -1,13 +1,16 @@
 * {
     font-family: 'Open Sans', sans-serif;
     box-sizing: border-box;
-    color: rgba(253, 253, 253, 1);
 }
 
 body {
-    /* color: whitesmoke; */
-    /* background-color: #585858  */
-    background-color: rgb(138, 136, 136);
+    height: 100%;
+    background: linear-gradient(#10416b, black);
+}
+
+.fill{
+    min-height:100vh;
+    height:100%;
 }
 
 .center {
