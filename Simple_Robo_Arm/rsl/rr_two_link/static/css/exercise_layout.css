@@ -96,3 +96,13 @@ color: white;
     padding: 10rem;
     border-bottom: 4px solid black;
 }
+
+.bg-overlay {
+    background: linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,.5)), url("/static/images/scdi_img.webp");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    height: 100vh;
+    padding-top: 50px;
+}
