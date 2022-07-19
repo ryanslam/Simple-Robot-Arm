@@ -60,6 +60,10 @@
         <script>
             socket.on("check_correct", (correct, callback)=>{
                 var bool_var = (correct.toLowerCase() === 'true');
+                if correct === '-1'{
+                    document.getElementById("guessed_solution").style.color = "red";
+                    document.getElementById("guessed_solution").innerHTML = "Current guess isn't within the workspace!\nPlease try again."
+                }
                 if (bool_var){
                     document.getElementById("guessed_solution").style.color = "green";
                     document.getElementById("guessed_solution").innerHTML = "Current guess is: Correct!";

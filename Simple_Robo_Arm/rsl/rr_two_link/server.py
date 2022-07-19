@@ -361,6 +361,8 @@ async def set_cartesian_position(id, use_traj:bool, traj_time:str, x_str:str, y_
     
     if theta1_guess is not None and theta2_guess is not None:
         solution = robot_arm._ikine_analytic((x, y))[0]
+        if solution == None:
+            await check_correct('-1')
         theta1, theta2 = float(theta1_guess), float(theta2_guess)               # these are in degrees
         solution = [int(round(math.degrees(i))) for i in solution]              # convert to degrees
         theta1_correct = abs(solution[0] - theta1) < 2
