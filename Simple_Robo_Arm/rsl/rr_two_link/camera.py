@@ -20,27 +20,71 @@ from datetime import datetime
 import traceback
 import time
 from threading import Thread
+import glob
 
 try:
     import util
 except:
     import rsl.rr_two_link.util as util
 
+CHESSBOARD_SIZE = (9,6)
+CHESSBOARD_SQUARE_SIZE = 25
+FRAME_SIZE = (480, 480)
 
 #####################################################################
 ########################## Machine vision ###########################
 #####################################################################
-def perform_all_machine_vision(frame:np.ndarray, text_overlay:Optional[list]) -> np.ndarray:
+def perform_all_machine_vision(frame:np.ndarray, text_overlay:Optional[list], obj_points, image_points) -> np.ndarray:
     """This function encapsulate all of the machine vision processes including annotation"""
     return annotate_frame(frame)
 
+# Find the chessboard corners for calibration.
+def find_corners_and_calculate(chessboard_size = (9,6), chessboard_square_size=25, frame_size=(480,480)):
+    terminate = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
-def correct_fisheye(frame:np.ndarray) -> np.ndarray:
+    objp = np.zeros((CHESSBOARD_SIZE[0] * CHESSBOARD_SIZE[1], 3), np.float32)
+    objp[:,:2] = np.mgrid[0:CHESSBOARD_SIZE[0],0:CHESSBOARD_SIZE[1]].T.reshape(-1,2)
+
+    objp = objp * CHESSBOARD_SQUARE_SIZE
+
+    # Array for obj point(3D) and image point(2D)
+    obj_points = []
+    image_points = []
+
+    images = glob.glob('./calibration_images/*.jpg')
+
+    for image in images:
+        img = cv2.imread(image)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        # Find the corners of the chess board.
+        ret, corners = cv2.findChessboardCorners(gray, CHESSBOARD_SIZE, None)
+        
+        # Add the found corners to the obj and image array.
+        if ret == True:
+            obj_points.append(objp)
+            sub_corner = cv2.cornerSubPix(gray, corners, (6,6), (-1,-1), terminate)
+            image_points.append(corners)
+    return (obj_points, image_points)
+
+def correct_fisheye(frame:np.ndarray, obj_points, image_points) -> np.ndarray:
     """Correct for the fisheye lens using cv2"""
-    pass
+    ret, cam_matrix, dist, rvecs, tvecs = cv2.calibrateCamera(obj_points, image_points, FRAME_SIZE, None, None)
+
+    # Undistortion section.
+    img = frame
+    h, w = img.shape[:2]
+    new_cam_matrix, roi = cv2.getOptimalNewCameraMatrix(cam_matrix, dist, (w,h), 1, (w,h))
+
+    # Undistort the image.
+    dst = cv2.undistort(img, cam_matrix, dist, None, new_cam_matrix)
+    x, y, w, h = roi
+    dst = dst[y:y+h, x:x+w]
+
+    return dst
 
 
-def annotate_frame(frame:np.ndarray,text_overlay:Optional[list]=None) -> np.ndarray:
+def annotate_frame(frame:np.ndarray,text_overlay:Optional[list]=None, obj_points, image_points) -> np.ndarray:
     now = datetime.now()
     text = datetime.strftime(now, "%m/%d/%Y, %H:%M:%S")
     resolution = frame.shape
@@ -48,6 +92,7 @@ def annotate_frame(frame:np.ndarray,text_overlay:Optional[list]=None) -> np.ndar
     scale = 0.5
     color = (255, 255, 255)
     origin = (5, 20)
+    undist_img = correct_fisheye(frame, obj_points, image_points)
     annotated = cv2.putText(frame, text, origin, cv2.FONT_HERSHEY_SIMPLEX,
             scale, color)
 
@@ -94,7 +139,7 @@ class CameraWrapper:
     Partially inspired by: https://www.pyimagesearch.com/2015/12/28/increasing-raspberry-pi-fps-with-python-and-opencv/
     """
     
-    def __init__(self, resolution=(480, 480), framerate=32):
+    def __init__(self, resolution=(480, 480), framerate=32, obj_points, img_points):
         self.logger = util.get_simple_logger('camera', verbosity=DEBUG)
 
         self.logger.debug(f'Initializing camera with res: {resolution}, framerate: {framerate}')
@@ -112,6 +157,10 @@ class CameraWrapper:
         self._raw_stream = None
         self._fps_estimator = FPSCounter()
         self._stop_video_flag = True
+
+        # Calibration vars.
+        self.obj_points = obj_points
+        self.img_points = img_points
         # unused for now. may just want to stuff it in
 
     def take_and_display_image(self):
@@ -153,7 +202,7 @@ class CameraWrapper:
         fps_text = f'Measured FPS: {self._fps_estimator.get_fps()}'
         if self._current_frame is None:
             return None
-        return perform_all_machine_vision(self._current_frame, fps_text)
+        return perform_all_machine_vision(self._current_frame, fps_text, obj_points=self.obj_points, image_points=self.img_points)
         
     def get_encoded_frame(self):
         if self._current_frame is None:

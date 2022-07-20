@@ -3,42 +3,34 @@ import cv2
 import numpy as np
 import glob
 
-# Initialize constants.
-CHESSBOARD_SIZE = (9,6)
-CHESSBOARD_SQUARE_SIZE = 25
-FRAME_SIZE = (480, 480)
-
 # When we want to terminate the iteration.
-terminate = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+def find_corners_and_calculate(chessboard_size = (9,6), chessboard_square_size=25, frame_size=(480,480)):
+    terminate = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
-objp = np.zeros((CHESSBOARD_SIZE[0] * CHESSBOARD_SIZE[1], 3), np.float32)
-objp[:,:2] = np.mgrid[0:CHESSBOARD_SIZE[0],0:CHESSBOARD_SIZE[1]].T.reshape(-1,2)
+    objp = np.zeros((CHESSBOARD_SIZE[0] * CHESSBOARD_SIZE[1], 3), np.float32)
+    objp[:,:2] = np.mgrid[0:CHESSBOARD_SIZE[0],0:CHESSBOARD_SIZE[1]].T.reshape(-1,2)
 
-objp = objp * CHESSBOARD_SQUARE_SIZE
+    objp = objp * CHESSBOARD_SQUARE_SIZE
 
-# Array for obj point(3D) and image point(2D)
-obj_points = []
-image_points = []
+    # Array for obj point(3D) and image point(2D)
+    obj_points = []
+    image_points = []
 
-images = glob.glob('./calibration_images/*.jpg')
+    images = glob.glob('./calibration_images/*.jpg')
 
-for image in images:
-    img = cv2.imread(image)
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    for image in images:
+        img = cv2.imread(image)
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    # Find the corners of the chess board.
-    ret, corners = cv2.findChessboardCorners(gray, CHESSBOARD_SIZE, None)
-    
-    # Add the found corners to the obj and image array.
-    if ret == True:
-        obj_points.append(objp)
-        sub_corner = cv2.cornerSubPix(gray, corners, (6,6), (-1,-1), terminate)
-        image_points.append(corners)
-
-        # Draw the corners.
-        # cv2.drawChessboardCorners(img, CHESSBOARD_SIZE, sub_corner, ret)
-        # cv2.imshow('img', img)
-        # cv2.waitKey(1000)
+        # Find the corners of the chess board.
+        ret, corners = cv2.findChessboardCorners(gray, CHESSBOARD_SIZE, None)
+        
+        # Add the found corners to the obj and image array.
+        if ret == True:
+            obj_points.append(objp)
+            sub_corner = cv2.cornerSubPix(gray, corners, (6,6), (-1,-1), terminate)
+            image_points.append(corners)
+    return (obj_points, image_points)
 
 # Calibrate the camera.
 ret, cam_matrix, dist, rvecs, tvecs = cv2.calibrateCamera(obj_points, image_points, FRAME_SIZE, None, None)

@@ -32,6 +32,11 @@ import robotics.robot as robotics
 from robotics.controllers import ControlTypes
 import util
 
+# Initialize constants.
+CHESSBOARD_SIZE = (9,6)
+CHESSBOARD_SQUARE_SIZE = 25
+FRAME_SIZE = (480, 480)
+
 # https://medium.com/knerd/best-practices-for-python-dependency-management-cc8d1913db82
 # https://pip.pypa.io/en/stable/user_guide/#requirements-files
 # https://note.nkmk.me/en/python-pip-install-requirements/
@@ -574,7 +579,7 @@ if __name__ == '__main__':
         web_app.router.add_static('/static/',
                                     path=static_folder_path,
                                     name='static')
-
+        obj_point, img_point = camera.find_corners_and_calculate(CHESSBOARD_SIZE, CHESSBOARD_SQUARE_SIZE, FRAME_SIZE)
         cam = camera.CameraWrapper(framerate=60)
         cam.start_video()
         aiohttp.web.run_app(web_app)
