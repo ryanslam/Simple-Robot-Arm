@@ -17,6 +17,7 @@ import traceback
 import numpy as np
 import RPi.GPIO as GPIO     # Added to interact with Raspberry Pi GPIO.
 from socketio import server
+import cv2
 
 try:
     from . import camera
@@ -559,6 +560,15 @@ if __name__ == '__main__':
     except:
         log_level = logging.INFO
 
+    obj_points, img_points = camera.find_corners_and_calculate(CHESSBOARD_SIZE, CHESSBOARD_SQUARE_SIZE, FRAME_SIZE)
+    ret, cam_matrix, dist, rvecs, tvecs = cv2.calibrateCamera(obj_points, img_points, (480,480), None, None)
+    
+    # Undistortion section.
+    new_cam_matrix, roi = cv2.getOptimalNewCameraMatrix(cam_matrix, dist, (480,480), 1, (480,480))
+
+    # Undistort the image.
+    mapx, mapy = cv2.initUndistortRectifyMap(cam_matrix, dist, None, new_cam_matrix, (480,480), 5)
+
     # set up the robot
     server_logger.level = log_level
     robot_arm = robotics.RRTwoLink(socket_logging_handler, log_level)
@@ -579,8 +589,9 @@ if __name__ == '__main__':
         web_app.router.add_static('/static/',
                                     path=static_folder_path,
                                     name='static')
-        obj_point, img_point = camera.find_corners_and_calculate(CHESSBOARD_SIZE, CHESSBOARD_SQUARE_SIZE, FRAME_SIZE)
-        cam = camera.CameraWrapper(framerate=60)
+                                    
+
+        cam = camera.CameraWrapper(framerate=60, mapx=mapx, mapy=mapy, roi=roi)
         cam.start_video()
         aiohttp.web.run_app(web_app)
     finally:
