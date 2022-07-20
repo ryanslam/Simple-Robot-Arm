@@ -32,15 +32,13 @@ for image in images:
     # Add the found corners to the obj and image array.
     if ret == True:
         obj_points.append(objp)
-        sub_corner = cv2.cornerSubPix(gray, corners, (5,1), (-1,-1), terminate)
+        sub_corner = cv2.cornerSubPix(gray, corners, (6,6), (-1,-1), terminate)
         image_points.append(corners)
 
         # Draw the corners.
-        cv2.drawChessboardCorners(img, CHESSBOARD_SIZE, sub_corner, ret)
+        # cv2.drawChessboardCorners(img, CHESSBOARD_SIZE, sub_corner, ret)
         # cv2.imshow('img', img)
         # cv2.waitKey(1000)
-
-cv2.destroyAllWindows()
 
 # Calibrate the camera.
 ret, cam_matrix, dist, rvecs, tvecs = cv2.calibrateCamera(obj_points, image_points, FRAME_SIZE, None, None)
