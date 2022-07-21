@@ -74,7 +74,7 @@ def correct_fisheye(frame:np.ndarray, mapx, mapy, roi) -> np.ndarray:
     x, y, w, h = roi
     dst = dst[y:y+h, x:x+w]
     # Possibly fixed the video resolution.
-    dst = cv2.resized(dst, (480, 480), interpolation=cv2.INTER_LINEAR)
+    dst = cv2.resize(dst, (480, 480), interpolation=cv2.INTER_LINEAR)
 
     return dst
 
