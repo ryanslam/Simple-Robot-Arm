@@ -6,6 +6,7 @@
 # https://www.pyimagesearch.com/2015/03/30/accessing-the-raspberry-pi-camera-with-opencv-and-python/
 # https://pyshine.com/Online-Video-Processing-From-Client-Camera/
 from __future__ import annotations
+from configparser import Interpolation
 import picamera
 from picamera import encoders
 from picamera.array import PiRGBArray
@@ -72,6 +73,8 @@ def correct_fisheye(frame:np.ndarray, mapx, mapy, roi) -> np.ndarray:
     dst = cv2.remap(frame, mapx, mapy, cv2.INTER_LINEAR)
     x, y, w, h = roi
     dst = dst[y:y+h, x:x+w]
+    # Possibly fixed the video resolution.
+    dst = cv2.resized(dst, (480, 480), interpolation=cv2.INTER_LINEAR)
 
     return dst
 
