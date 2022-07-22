@@ -93,7 +93,7 @@ server_logger.addHandler(socket_logging_handler)
 @routes.get('/')
 async def landing(request):
     path_to_this_file = os.path.dirname(os.path.abspath(__file__))
-    filename = os.path.join(path_to_this_file, 'templates/landing.html')
+    filename = os.path.join(path_to_this_file, 'templates/home.html')
     with open(filename) as file_obj:
         return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
 
