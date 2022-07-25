@@ -64,7 +64,7 @@
                     document.getElementById("guessed_solution").style.color = "red";
                     document.getElementById("guessed_solution").innerHTML = "Current guess isn't within the workspace!\nPlease try again."
                 }
-                if (bool_var){
+                else if (bool_var){
                     document.getElementById("guessed_solution").style.color = "green";
                     document.getElementById("guessed_solution").innerHTML = "Current guess is: Correct!";
                 }
