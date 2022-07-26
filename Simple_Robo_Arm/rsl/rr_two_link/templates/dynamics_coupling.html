@@ -30,36 +30,37 @@
     <body>
         <!--Navigation Bar Section-->
         <nav class="navbar navbar-expand-lg navbar-fade navbar-dark bg-dark sticky-top">
-            <a class="navbar-brand mb-0" href="#">
-              Robotics I&II
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            
+          <a class="navbar-brand mb-0" href="#">
+            Robotics I&II
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
           
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="nav navbar-nav ml-auto">
-                <li class="nav-item">
-                  <button class="btn btn-default bg-dark text-light" type="button" data-toggle="dropdown" onclick="window.location.href='http://simple-robot-arm:8080/';">Home</button>
+        
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="nav navbar-nav ml-auto">
+              <li class="nav-item">
+                <button class="btn btn-default bg-dark text-light" type="button" data-toggle="dropdown" onclick="window.location.href='http://simple-robot-arm:8080/';">Home</button>
 
+              </li>
+              <li class="nav-item dropdown">
+                <button class="btn btn-default dropdown-toggle bg-dark text-light" type="button" data-toggle="dropdown">Demonstrations</button>
+                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="http://simple-robot-arm:8080/workspace_demo">Workspace</a>
+                    <a class="dropdown-item" href="http://simple-robot-arm:8080/jacobian">Jacobian</a>
+                    <a class="dropdown-item" href="http://simple-robot-arm:8080/dynamics_coupling">Dynamics Coupling</a>
+                  </div>
                 </li>
-                <li class="nav-item dropdown">
-                  <button class="btn btn-default dropdown-toggle bg-dark text-light" type="button" data-toggle="dropdown">Demonstrations</button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                      <a class="dropdown-item" href="http://simple-robot-arm:8080/jacobian">Jacobian</a>
-                      <a class="dropdown-item active" href="http://simple-robot-arm:8080/dynamics_coupling">Dynamics Coupling</a>
-                    </div>
-                  </li>
-                <li class="nav-item dropdown">
-                  <button class="btn btn-default dropdown-toggle bg-dark text-light" type="button" data-toggle="dropdown">Exercises</button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                      <a class="dropdown-item" href="http://simple-robot-arm:8080/exercise_1">Forward Kinematics</a>
-                      <a class="dropdown-item" href="http://simple-robot-arm:8080/exercise_2">Inverse Kinematics</a>
-                    </div>
-                </li>
-              </ul>
-            </div>
+              <li class="nav-item dropdown">
+                <button class="btn btn-default dropdown-toggle bg-dark text-light" type="button" data-toggle="dropdown">Exercises</button>
+                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="http://simple-robot-arm:8080/exercise_1">Forward Kinematics</a>
+                    <a class="dropdown-item" href="http://simple-robot-arm:8080/exercise_2">Inverse Kinematics</a>
+                  </div>
+              </li>
+            </ul>
+          </div>
         </nav>
 
         <!-- Need to correct the pathing/routing for static files.-->

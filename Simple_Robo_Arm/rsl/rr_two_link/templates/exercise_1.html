@@ -23,39 +23,41 @@
     </head>
     <body>
         <nav class="navbar navbar-expand-lg navbar-fade navbar-dark bg-dark sticky-top">
-            <a class="navbar-brand mb-0" href="#">
-              Robotics I&II
-            </a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            
+          <a class="navbar-brand mb-0" href="#">
+            Robotics I&II
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
           
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-              <ul class="nav navbar-nav ml-auto">
-                <li class="nav-item">
-                  <button class="btn btn-default bg-dark text-light" type="button" data-toggle="dropdown" onclick="window.location.href='http://simple-robot-arm:8080/';">Home</button>
+        
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="nav navbar-nav ml-auto">
+              <li class="nav-item">
+                <button class="btn btn-default bg-dark text-light" type="button" data-toggle="dropdown" onclick="window.location.href='http://simple-robot-arm:8080/';">Home</button>
 
+              </li>
+              <li class="nav-item dropdown">
+                <button class="btn btn-default dropdown-toggle bg-dark text-light" type="button" data-toggle="dropdown">Demonstrations</button>
+                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="http://simple-robot-arm:8080/workspace_demo">Workspace</a>
+                    <a class="dropdown-item" href="http://simple-robot-arm:8080/jacobian">Jacobian</a>
+                    <a class="dropdown-item" href="http://simple-robot-arm:8080/dynamics_coupling">Dynamics Coupling</a>
+                  </div>
                 </li>
-                <li class="nav-item dropdown">
-                  <button class="btn btn-default dropdown-toggle bg-dark text-light" type="button" data-toggle="dropdown">Demonstrations</button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                      <a class="dropdown-item" href="http://simple-robot-arm:8080/jacobian">Jacobian</a>
-                      <a class="dropdown-item" href="http://simple-robot-arm:8080/dynamics_coupling">Dynamics Coupling</a>
-                    </div>
-                  </li>
-                <li class="nav-item dropdown">
-                  <button class="btn btn-default dropdown-toggle bg-dark text-light" type="button" data-toggle="dropdown">Exercises</button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                      <a class="dropdown-item" href="http://simple-robot-arm:8080/exercise_1">Forward Kinematics</a>
-                      <a class="dropdown-item" href="http://simple-robot-arm:8080/exercise_2">Inverse Kinematics</a>
-                    </div>
-                </li>
-              </ul>
-            </div>
+              <li class="nav-item dropdown">
+                <button class="btn btn-default dropdown-toggle bg-dark text-light" type="button" data-toggle="dropdown">Exercises</button>
+                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" href="http://simple-robot-arm:8080/exercise_1">Forward Kinematics</a>
+                    <a class="dropdown-item" href="http://simple-robot-arm:8080/exercise_2">Inverse Kinematics</a>
+                  </div>
+              </li>
+            </ul>
+          </div>
         </nav>
         <!-- Scripts used for the commands. -->
         <script src="/static/scripts/utility.js"></script>
+        <script src="/static/scripts/telemetry.js"></script>
         <script src="/static/scripts/forward_kin.js"></script>
 
         <script>
@@ -72,7 +74,11 @@
             });
         </script>
 
-        <h1 class="center">Forward Kinematic Example</h1>
+        <div class="container">
+          <br>
+          <h1 class="text-center text-light"><u>Forward Kinematics Exercise</u></h1>
+          <br>
+        </div>
         <div class="container bg-light Jumbotron">
             <!--<fieldset class="command_window bg-light">-->
               <h1>Video Feed</h1>
@@ -152,46 +158,20 @@
                         <div class="log_window bg-light" id="log_window"></div>
                     </div>
                   </div>
+                  <div class="row">
+                    <fieldset id="command_window">
+                        <legend>GUESSED SOLUTION:</legend>
+                        <div  class="guess_fieldset">
+                            <fieldset>
+                                <h1 id="guessed_solution"></h1>
+                            </fieldset>
+                        </div>
+                    </fieldset>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        <fieldset class="command_window">
-            <fieldset class="command_window">
-                <legend>SET GOAL JOINT POSITION</legend>
-                <label for="theta1">θ_1:</label>
-                <input name="theta1" type="number" id="theta1" value="0" min="-180" max="180" step="45">
-                <label for="theta2">θ_2:</label>
-                <input name="theta2" type="number" id="theta2" value="0" min="-180" max="180" step="45"> (degrees)
-                <br>
-                <label for="use_joint_traj">Make joint space trajectory</label>
-                <input type="checkbox" id = "use_joint_traj">
-                <label for="joint_traj_time">Joint trajectory time:</label>
-                <input name="joint_traj_time" type="number" id="joint_traj_time" value="" min="1" max="10">
-                <br>
-                <br>
-                <label for="check_forward_kinematic_solution">Guess at forward kinematic solution: </label>
-                <input type="checkbox" id = "check_forward_kinematic_solution">
-                <br>
-                <label for="x_forward_kinematic_guess">x guess:</label>
-                <input name="x_forward_kinematic_guess" type="number" id="x_forward_kinematic_guess" value="" min="-800" max="800">
-                <label for="y_forward_kinematic_guess">y guess:</label>
-                <input name="y_forward_kinematic_guess" type="number" id="y_forward_kinematic_guess" value="", min="-800" max="800"> (mm)
-                <br>
-                <button class="button" onClick="set_joint_position()">SET JOINT POSITION</button>
-            </fieldset>  
-        </fieldset>
-        
-        <div>
-            <fieldset id="command_window">
-                <legend>GUESSED SOLUTION:</legend>
-                <div  class="guess_fieldset">
-                    <fieldset>
-                        <h1 id="guessed_solution"></h1>
-                    </fieldset>
-                </div>
-            </fieldset>
-        </div>
         <!-- Scripts for Bootstrap. -->
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>

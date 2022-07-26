@@ -119,6 +119,13 @@ async def exercise_2(request):
     with open(filename) as file_obj:
         return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
 
+@routes.get('/workspace_demo')
+async def assignment_1(request):
+    path_to_this_file = os.path.dirname(os.path.abspath(__file__))
+    filename = os.path.join(path_to_this_file, 'templates/workspace_demo.html')
+    with open(filename) as file_obj:
+        return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
+
 @routes.get('/dynamics_coupling')
 async def assignment_1(request):
     path_to_this_file = os.path.dirname(os.path.abspath(__file__))
@@ -367,7 +374,7 @@ async def set_cartesian_position(id, use_traj:bool, traj_time:str, x_str:str, y_
     
     if theta1_guess is not None and theta2_guess is not None:
         solution = robot_arm._ikine_analytic((x, y))[0]
-        if solution == None:
+        if robot_arm._ikine_analytic((x, y))[1] == False:
             await check_correct('-1')
             return
         theta1, theta2 = float(theta1_guess), float(theta2_guess)               # these are in degrees
