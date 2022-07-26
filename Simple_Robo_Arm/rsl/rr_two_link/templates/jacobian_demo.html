@@ -59,22 +59,37 @@
         <script src="/static/scripts/jacobian_demo.js"></script>
 
         <h1 class="center">JACOBIAN DEMONSTRATION</h1>
-        <div class="video_container">
-            <fieldset class="command_window">
-                <legend class="video_feed_text">Video Feed</legend>
-                <img id="video_feed", src="/video_feed">
-            </fieldset>
-        </div>
-        <br>
+        <div class="container bg-light Jumbotron">
+          <!--<fieldset class="command_window bg-light">-->
+            <h1>Video Feed</h1>
+            <!--<div class="embed-responsive embed-responsive-21by9">-->
+            <div class="text-center">
+              <!--<img id="video_feed text-center", src="/video_feed">-->
+                <iframe class="embed-responsive-item" src="/video_feed" width="485" height="485"></iframe>
+
+            </div>
+              <!--<img id="video_feed", src="/video_feed">-->
+          <!--</fieldset>-->
+          <br>
+      </div>
+      <br>
+      <div class="container jumbotron">
+        <h1>Commands</h1>
+        <div class="row-md-3">
+          <div class="container">
+            <div class="col">
+              <h5>Utility</h5>
+            </div>
+            <div class="col">
+              <button type="button" class="btn btn-secondary btn-sm" onClick="disable_torque()">MOTORS OFF</button>
+              <button type="button" class="btn btn-secondary btn-sm" onClick="enable_torque()">MOTORS ON</button>
+              <button type="button" class="btn btn-secondary btn-sm" onClick="go_home()">GO HOME</button>
+              <button type="button" class="btn btn-secondary btn-sm" onClick="reconnect_dynamixel()">RECONNECT TO DYNAMIXEL</button>
+            </div>
+          </div>
+      </div>
         <fieldset class="command_window">
             <legend class="video_feed_text">Commands</legend>
-            <fieldset class="command_window">
-                <legend>UTILITY</legend>
-               <button class="button" onClick="disable_torque()">MOTORS OFF</button>
-               <button class="button" onClick="enable_torque()">MOTORS ON</button>
-               <button class="button" onClick="go_home()">GO HOME</button>
-               <button class="button" onClick="reconnect_dynamixel()">RECONNECT TO DYNAMIXEL</button>
-            </fieldset>
             <fieldset class="command_window">
                 <legend>JACOBIAN DEMONSTRATION</legend>
                 <button class="button" onClick="jacobian_demo()">JACOBIAN DEMO</button>

@@ -1,12 +1,18 @@
-<!-- Webpage for the Forward Kinematics Exercise -->
+<!-- Webpage for Dynamics Coupling Demo -->
 <!DOCTYPE html>
 <html lang="en">
+  <style>
+    * {
+      font-family: 'Open Sans', sans-serif;
+      box-sizing: border-box;
+    }
+  </style>
     <head>
         <meta charset="utf-8">
-        <title>Forward Kinematic Exercise</title>
+        <title>Dynamics Coupling</title>
         <link href="/static/css/exercise_layout.css" rel="stylesheet">
 
-         <!-- CSS for Boostrap. -->
+        <!-- CSS for Boostrap. -->
          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
@@ -22,6 +28,7 @@
             </script>
     </head>
     <body>
+        <!--Navigation Bar Section-->
         <nav class="navbar navbar-expand-lg navbar-fade navbar-dark bg-dark sticky-top">
             <a class="navbar-brand mb-0" href="#">
               Robotics I&II
@@ -41,7 +48,7 @@
                   <button class="btn btn-default dropdown-toggle bg-dark text-light" type="button" data-toggle="dropdown">Demonstrations</button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                       <a class="dropdown-item" href="http://simple-robot-arm:8080/jacobian">Jacobian</a>
-                      <a class="dropdown-item" href="http://simple-robot-arm:8080/dynamics_coupling">Dynamics Coupling</a>
+                      <a class="dropdown-item active" href="http://simple-robot-arm:8080/dynamics_coupling">Dynamics Coupling</a>
                     </div>
                   </li>
                 <li class="nav-item dropdown">
@@ -54,40 +61,34 @@
               </ul>
             </div>
         </nav>
-        <!-- Scripts used for the commands. -->
+
+        <!-- Need to correct the pathing/routing for static files.-->
         <script src="/static/scripts/utility.js"></script>
-        <script src="/static/scripts/forward_kin.js"></script>
+        <script src="/static/scripts/telemetry.js"></script>
+        <script src="/static/scripts/dynamics_coupling_demo.js"></script>
 
-        <script>
-            socket.on("check_correct", (correct, callback)=>{
-                var bool_var = (correct.toLowerCase() === 'true');
-                if (bool_var){
-                    document.getElementById("guessed_solution").style.color = "green";
-                    document.getElementById("guessed_solution").innerHTML = "Current guess is: Correct!";
-                }
-                else{
-                    document.getElementById("guessed_solution").style.color = "red";
-                    document.getElementById("guessed_solution").innerHTML = "Current guess is: Incorrect :(";
-                }
-            });
-        </script>
-
-        <h1 class="center">Forward Kinematic Example</h1>
-        <div class="container bg-light Jumbotron">
-            <!--<fieldset class="command_window bg-light">-->
-              <h1>Video Feed</h1>
-              <!--<div class="embed-responsive embed-responsive-21by9">-->
-              <div class="text-center">
-                <!--<img id="video_feed text-center", src="/video_feed">-->
-                  <iframe class="embed-responsive-item" src="/video_feed" width="485" height="485"></iframe>
-
-              </div>
-                <!--<img id="video_feed", src="/video_feed">-->
-            <!--</fieldset>-->
+        <!--Start of the Dynamics Coupling Section-->
+        <!--<div class="bg-secondary bg-gradient">-->
+          <div class="container">
             <br>
-        </div>
-        <br>
-        <div class="container jumbotron">
+            <h1 class="text-center text-light"><u>Workspace Demonstration</u></h1>
+            <br>
+          </div>
+          <div class="container bg-light Jumbotron">
+              <!--<fieldset class="command_window bg-light">-->
+                <h1>Video Feed</h1>
+                <!--<div class="embed-responsive embed-responsive-21by9">-->
+                <div class="text-center">
+                  <!--<img id="video_feed text-center", src="/video_feed">-->
+                    <iframe class="embed-responsive-item" src="/video_feed" width="485" height="485"></iframe>
+
+                </div>
+                  <!--<img id="video_feed", src="/video_feed">-->
+              <!--</fieldset>-->
+              <br>
+          </div>
+          <br>
+          <div class="container jumbotron">
             <h1>Commands</h1>
             <div class="row-md-3">
               <div class="container">
@@ -107,27 +108,9 @@
           <div class="row-md-3">
             <div class="container">
               <div class="col">
-                <h5>SET GOAL JOINT POSITION</h5>
-                <label for="theta1">θ_1:</label>
-                <input name="theta1" type="number" id="theta1" value="0" min="-180" max="180" step="45">
-                <label for="theta2">θ_2:</label>
-                <input name="theta2" type="number" id="theta2" value="0" min="-180" max="180" step="45"> (degrees)
-                <br>
-                <label for="use_joint_traj">Make joint space trajectory</label>
-                <input type="checkbox" id = "use_joint_traj">
-                <label for="joint_traj_time">Joint trajectory time:</label>
-                <input name="joint_traj_time" type="number" id="joint_traj_time" value="" min="1" max="10">
-                <br>
-                <br>
-                <label for="check_forward_kinematic_solution">Guess at forward kinematic solution: </label>
-                <input type="checkbox" id = "check_forward_kinematic_solution">
-                <br>
-                <p for="x_forward_kinematic_guess">x guess:</label>
-                <input name="x_forward_kinematic_guess" type="number" id="x_forward_kinematic_guess" value="" min="-800" max="800">
-                <label for="y_forward_kinematic_guess">y guess:</label>
-                <input name="y_forward_kinematic_guess" type="number" id="y_forward_kinematic_guess" value="", min="-800" max="800"> (mm)
-                <br>
-                <button type="button" class="btn btn-secondary btn-sm" onClick="set_joint_position()">SET JOINT POSITION</button>
+                <h5>Dynamics Coupling Demonstration</h5>
+                <button type="button" class="btn btn-secondary btn-sm" onClick="dynamics_coupling_demo()">DYNAMICS COUPLING DEMO</button>
+                <button type="button" class="btn btn-secondary btn-sm" onClick="dynamics_time_varying_demo()">DYNAMICS TIME VARYING DEMO</button>
               </div>
               <br>
                 </div>
@@ -156,42 +139,22 @@
               </div>
             </div>
           </div>
-        <fieldset class="command_window">
-            <fieldset class="command_window">
-                <legend>SET GOAL JOINT POSITION</legend>
-                <label for="theta1">θ_1:</label>
-                <input name="theta1" type="number" id="theta1" value="0" min="-180" max="180" step="45">
-                <label for="theta2">θ_2:</label>
-                <input name="theta2" type="number" id="theta2" value="0" min="-180" max="180" step="45"> (degrees)
-                <br>
-                <label for="use_joint_traj">Make joint space trajectory</label>
-                <input type="checkbox" id = "use_joint_traj">
-                <label for="joint_traj_time">Joint trajectory time:</label>
-                <input name="joint_traj_time" type="number" id="joint_traj_time" value="" min="1" max="10">
-                <br>
-                <br>
-                <label for="check_forward_kinematic_solution">Guess at forward kinematic solution: </label>
-                <input type="checkbox" id = "check_forward_kinematic_solution">
-                <br>
-                <label for="x_forward_kinematic_guess">x guess:</label>
-                <input name="x_forward_kinematic_guess" type="number" id="x_forward_kinematic_guess" value="" min="-800" max="800">
-                <label for="y_forward_kinematic_guess">y guess:</label>
-                <input name="y_forward_kinematic_guess" type="number" id="y_forward_kinematic_guess" value="", min="-800" max="800"> (mm)
-                <br>
-                <button class="button" onClick="set_joint_position()">SET JOINT POSITION</button>
-            </fieldset>  
-        </fieldset>
-        
-        <div>
-            <fieldset id="command_window">
-                <legend>GUESSED SOLUTION:</legend>
-                <div  class="guess_fieldset">
-                    <fieldset>
-                        <h1 id="guessed_solution"></h1>
-                    </fieldset>
-                </div>
-            </fieldset>
-        </div>
+        <!--</div>-->
+        <!-- https://mdbootstrap.com/docs/standard/navigation/footer/examples-and-customization/ -->
+        <footer class="bg-dark text-center text-white">
+          <!-- Grid container -->
+          <!-- Social Media Stuff -->
+          <div class="container p-4 pb-0">
+            
+          </div>
+          <!-- Copyright -->
+          <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+            © 2022 Copyright:
+            <a class="text-white" href="https://www.scu.edu/engineering/labs--research/labs/robotic-systems-lab/">Robotics System Lab</a>
+          </div>
+          <!-- Copyright -->
+        </footer>
+
         <!-- Scripts for Bootstrap. -->
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
