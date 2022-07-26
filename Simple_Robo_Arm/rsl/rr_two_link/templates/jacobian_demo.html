@@ -43,6 +43,7 @@
                     <a class="dropdown-item" href="http://simple-robot-arm:8080/workspace_demo">Workspace</a>
                     <a class="dropdown-item" href="http://simple-robot-arm:8080/jacobian">Jacobian</a>
                     <a class="dropdown-item" href="http://simple-robot-arm:8080/dynamics_coupling">Dynamics Coupling</a>
+                    <a class="dropdown-item" href="http://simple-robot-arm:8080/controls">Controls</a>
                   </div>
                 </li>
               <li class="nav-item dropdown">
@@ -57,6 +58,7 @@
       </nav>
         <!-- Need to correct the pathing/routing for static files.-->
         <script src="/static/scripts/utility.js"></script>
+        <script src="/static/scripts/toggle_light.js"></script>
         <script src="/static/scripts/telemetry.js"></script>
         <script src="/static/scripts/jacobian_demo.js"></script>
 
@@ -91,6 +93,7 @@
               <button type="button" class="btn btn-secondary btn-sm" onClick="enable_torque()">MOTORS ON</button>
               <button type="button" class="btn btn-secondary btn-sm" onClick="go_home()">GO HOME</button>
               <button type="button" class="btn btn-secondary btn-sm" onClick="reconnect_dynamixel()">RECONNECT TO DYNAMIXEL</button>
+              <button type="button" class="btn btn-secondary btn-sm" onClick="toggle_light()">TOGGLE LIGHT</button>
             </div>
           </div>
       </div>

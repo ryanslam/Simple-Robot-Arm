@@ -13,3 +13,19 @@ function set_cartesian_position() {
         socket.emit("set_cartesian_position", use_traj, traj_time, x, y);
     }
 }
+
+socket.on("check_correct", (correct, callback)=>{
+    var bool_var = (correct.toLowerCase() === 'true');
+    if (correct === '-1'){
+        document.getElementById("guessed_solution").style.color = "red";
+        document.getElementById("guessed_solution").innerHTML = "Current guess isn't within the workspace!\nPlease try again."
+    }
+    else if (bool_var){
+        document.getElementById("guessed_solution").style.color = "green";
+        document.getElementById("guessed_solution").innerHTML = "Current guess is: Correct!";
+    }
+    else{
+        document.getElementById("guessed_solution").style.color = "red";
+        document.getElementById("guessed_solution").innerHTML = "Current guess is: Incorrect :(";
+    }
+});

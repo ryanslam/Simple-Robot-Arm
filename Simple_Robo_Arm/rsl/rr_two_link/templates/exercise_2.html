@@ -43,6 +43,7 @@
                     <a class="dropdown-item" href="http://simple-robot-arm:8080/workspace_demo">Workspace</a>
                     <a class="dropdown-item" href="http://simple-robot-arm:8080/jacobian">Jacobian</a>
                     <a class="dropdown-item" href="http://simple-robot-arm:8080/dynamics_coupling">Dynamics Coupling</a>
+                    <a class="dropdown-item" href="http://simple-robot-arm:8080/controls">Controls</a>
                   </div>
                 </li>
               <li class="nav-item dropdown">
@@ -56,25 +57,30 @@
           </div>
       </nav>
         <script src="/static/scripts/utility.js"></script>
+        <script src="/static/scripts/toggle_light.js"></script>
         <script src="/static/scripts/telemetry.js"></script>
         <script src="/static/scripts/inverse_kin.js"></script>
-
         <script>
-            socket.on("check_correct", (correct, callback)=>{
-                var bool_var = (correct.toLowerCase() === 'true');
-                if (correct === '-1'){
-                    document.getElementById("guessed_solution").style.color = "red";
-                    document.getElementById("guessed_solution").innerHTML = "Current guess isn't within the workspace!\nPlease try again."
-                }
-                else if (bool_var){
-                    document.getElementById("guessed_solution").style.color = "green";
-                    document.getElementById("guessed_solution").innerHTML = "Current guess is: Correct!";
-                }
-                else{
-                    document.getElementById("guessed_solution").style.color = "red";
-                    document.getElementById("guessed_solution").innerHTML = "Current guess is: Incorrect :(";
-                }
-            });
+          function toggle_light(){
+            alert("toggled");
+          }
+        </script>
+        <script>
+          socket.on("check_correct", (correct, callback)=>{
+            var bool_var = (correct.toLowerCase() === 'true');
+            if (correct === '-1'){
+                document.getElementById("guessed_solution").style.color = "red";
+                document.getElementById("guessed_solution").innerHTML = "Current guess isn't within the workspace!\nPlease try again."
+            }
+            else if (bool_var){
+                document.getElementById("guessed_solution").style.color = "green";
+                document.getElementById("guessed_solution").innerHTML = "Current guess is: Correct!";
+            }
+            else{
+                document.getElementById("guessed_solution").style.color = "red";
+                document.getElementById("guessed_solution").innerHTML = "Current guess is: Incorrect :(";
+            }
+        });
         </script>
         <div class="container">
           <br>
@@ -88,7 +94,6 @@
             <div class="text-center">
               <!--<img id="video_feed text-center", src="/video_feed">-->
                 <iframe class="embed-responsive-item" src="/video_feed" width="485" height="485"></iframe>
-
             </div>
               <!--<img id="video_feed", src="/video_feed">-->
           <!--</fieldset>-->
@@ -107,6 +112,8 @@
               <button type="button" class="btn btn-secondary btn-sm" onClick="enable_torque()">MOTORS ON</button>
               <button type="button" class="btn btn-secondary btn-sm" onClick="go_home()">GO HOME</button>
               <button type="button" class="btn btn-secondary btn-sm" onClick="reconnect_dynamixel()">RECONNECT TO DYNAMIXEL</button>
+              <button type="button" class="btn btn-secondary btn-sm" onClick="toggle_light()">TOGGLE LIGHT</button>
+              <br>
             </div>
           </div>
       </div>
@@ -165,7 +172,7 @@
                   </div>
                   <div class="row">
                     <fieldset id="command_window">
-                        <legend>GUESSED SOLUTION:</legend>
+                        <h3>GUESSED SOLUTION:</h3>
                         <div  class="guess_fieldset">
                             <fieldset>
                                 <h1 id="guessed_solution"></h1>

@@ -140,6 +140,13 @@ async def assignment_1(request):
     with open(filename) as file_obj:
         return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
 
+@routes.get('/controls')
+async def assignment_1(request):
+    path_to_this_file = os.path.dirname(os.path.abspath(__file__))
+    filename = os.path.join(path_to_this_file, 'templates/controls_demo.html')
+    with open(filename) as file_obj:
+        return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
+
 @socket_io.event
 async def connect(id, information):
     server_logger.info(f'Server connected to client id {id}.')
@@ -270,6 +277,9 @@ async def workspace_demo(id, theta_1_min, theta_1_max):
 #         robot_arm.set_joint_pose((0, 0))
 #         robot_arm.doing_demo = False
 
+@socket_io.event
+async def light_toggle(id, light_state):
+    pass
 
 @socket_io.event
 async def dynamics_coupling_demo(id):
