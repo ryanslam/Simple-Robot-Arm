@@ -130,12 +130,26 @@
                 </select>
                 <label for="kp">Kp</label>
                 <input name="kp" type="number" id="kp" value="0" min="0" max="100" step="1">
-                <!-- <label for="ki">Ki</label> -->
-                <!-- <input name="ki" type="number" id="ki" value="0" min="0" max="100" step="1"> -->
+                <label for="ki">Ki</label>
+                <input name="ki" type="number" id="ki" value="0" min="0" max="100" step="1">
                 <label for="kd">Kd</label>
                 <input name="kd" type="number" id="kd" value="0" min="0" max="100" step="1">
+                <br>
+                <label for="check_enable_kis">Enable kis </label>
+                <input type="checkbox" id = "check_enable_kis">
+                <br>
               </div>
-              <br>
+              <div class="col">
+                <br>
+                <h5>Set Goal Joint Position</h5>
+                <label for="theta1">θ_1:</label>
+                <input name="theta1" type="number" id="theta1" value="0" min="-180" max="180" step="45">
+                <label for="theta2">θ_2:</label>
+                <input name="theta2" type="number" id="theta2" value="0" min="-180" max="180" step="45"> (degrees)
+                <br>
+                <button type="button" class="btn btn-secondary btn-sm" onClick="set_joint_position()">SET JOINT POSITION</button>
+                <br>
+                <br>
                 </div>
                 <div class="container">
                   <div class="row">
