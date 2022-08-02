@@ -556,9 +556,9 @@ def toggle_led(pin_num, sleep_time):
 
 if __name__ == '__main__':
     # Pin used or LEDs
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setup(11, GPIO.OUT)       # Correct(green) LED
-    GPIO.setup(12, GPIO.OUT)       # Incorrect(red) LED
+    # GPIO.setmode(GPIO.BOARD)
+    # GPIO.setup(11, GPIO.OUT)       # Correct(green) LED
+    # GPIO.setup(12, GPIO.OUT)       # Incorrect(red) LED
     #bind the aiohttp endpoint to the web_application
     import argparse
     parser = argparse.ArgumentParser()
