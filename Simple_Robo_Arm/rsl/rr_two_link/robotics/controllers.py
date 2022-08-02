@@ -191,9 +191,14 @@ class JointPositionPID(JointPIDController):
         super().__init__(ControlTypes.JOINT_PID_TORQUE)
         # self.control_type: ControlTypes = ControlTypes.ACTUATOR_POSITION_CONTROL
         
+        # kps = [55, 35]
+        # kis = [0, 0]
+        # kds = [7, 4]
+
         kps = [55, 35]
         kis = [0, 0]
         kds = [7, 4]
+
         self._pids = self._produce_pid_controllers(2, kps, kis, kds, (0, 0))
         saturation_point = 1000 # milli amps
         self._set_pid_saturation_points([saturation_point, saturation_point])
