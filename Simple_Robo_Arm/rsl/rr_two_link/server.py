@@ -554,6 +554,9 @@ def toggle_led(pin_num, sleep_time):
     time.sleep(sleep_time)
     GPIO.output(pin_num,False)
 
+##############################
+# Main web app server section.
+##############################
 if __name__ == '__main__':
     # Pin used or LEDs
     # GPIO.setmode(GPIO.BOARD)
