@@ -221,7 +221,10 @@ async def workspace_demo(id, theta_1_min, theta_1_max):
         return
 
     robot_arm.logger.info('Begin workspace demo')
+    # Set the flag to lock the robotic demo.
     robot_arm.doing_demo = True
+
+    # Initialize the robotics arm.
     robot_arm.set_control_mode(ControlTypes.ACTUATOR_POSITION_CONTROL)
     robot_arm.set_motor_gains(0, 80, 0)
     robot_arm.set_motor_gains(1, 80, 0)
@@ -229,6 +232,8 @@ async def workspace_demo(id, theta_1_min, theta_1_max):
     resolution = math.pi/4
     robot_arm.set_joint_pose((theta1, 0))
     await asyncio.sleep(5)
+
+    # Iterate through thee workspace until the max radian for theta 1 is reached.
     while not(theta1>math.radians(float(theta_1_max))):
         robot_arm.logger.info(str(theta1))
         robot_arm.set_joint_pose((theta1,math.radians(-180)))
@@ -238,9 +243,14 @@ async def workspace_demo(id, theta_1_min, theta_1_max):
         theta1+=resolution
         robot_arm.logger.info(str(theta1))
         await asyncio.sleep(1)
+
+    # Reset the robotic arm to the default "home" position.
     robot_arm.set_joint_pose((0,0))
     robot_arm.logger.info('Conclude workspace demo')
+
+    # Release the lock.
     robot_arm.doing_demo = False
+
 # async def workspace_demo(id, theta_1_min, theta_1_max, theta_2_min, theta_2_max):
 #     server_logger.info(f'Received WORKSPACE_DEMO command from id {id}')
 
