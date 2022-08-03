@@ -28,6 +28,10 @@ try:
 except:
     import rsl.rr_two_link.util as util
 
+
+#####################################################################
+############### Constants Used for Camera Calibration ###############
+#####################################################################
 CHESSBOARD_SIZE = (9,6)
 CHESSBOARD_SQUARE_SIZE = 25
 FRAME_SIZE = (480, 480)

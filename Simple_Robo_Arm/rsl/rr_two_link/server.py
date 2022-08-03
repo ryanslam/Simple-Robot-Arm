@@ -89,14 +89,15 @@ socket_logging_handler = SocketIOHandler()
 socket_logging_handler.setFormatter(socket_logging_format)  # this didn't seem to work
 server_logger.addHandler(socket_logging_handler)
 
-
+##########################
+# Webpage Routing Section.
+########################## 
 @routes.get('/')
 async def landing(request):
     path_to_this_file = os.path.dirname(os.path.abspath(__file__))
     filename = os.path.join(path_to_this_file, 'templates/home.html')
     with open(filename) as file_obj:
         return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
-
 
 @routes.get('/master')
 async def master(request):
@@ -147,6 +148,9 @@ async def assignment_1(request):
     with open(filename) as file_obj:
         return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
 
+#################################################
+# Robotic arm demonstration and exercise section.
+################################################# 
 @socket_io.event
 async def connect(id, information):
     server_logger.info(f'Server connected to client id {id}.')
