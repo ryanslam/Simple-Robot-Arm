@@ -579,13 +579,15 @@ if __name__ == '__main__':
     except:
         log_level = logging.INFO
 
+    """Camera distortion correction initialization section."""
+    # Find the corners of the sample chessboard images and return the corrected camera matrix.
     obj_points, img_points = camera.find_corners_and_calculate(CHESSBOARD_SIZE, CHESSBOARD_SQUARE_SIZE, FRAME_SIZE)
     ret, cam_matrix, dist, rvecs, tvecs = cv2.calibrateCamera(obj_points, img_points, (480,480), None, None)
     
-    # Undistortion section.
+    # Undistortion section: Get the correct camera matrix.
     new_cam_matrix, roi = cv2.getOptimalNewCameraMatrix(cam_matrix, dist, (480,480), 1, (480,480))
 
-    # Undistort the image.
+    # Initialize the cam correction map.
     mapx, mapy = cv2.initUndistortRectifyMap(cam_matrix, dist, None, new_cam_matrix, (480,480), 5)
 
     # set up the robot

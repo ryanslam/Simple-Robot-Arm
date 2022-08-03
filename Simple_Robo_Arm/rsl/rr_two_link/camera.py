@@ -41,6 +41,7 @@ def perform_all_machine_vision(frame:np.ndarray, text_overlay:Optional[list], ma
 
 # Find the chessboard corners for calibration.
 def find_corners_and_calculate(chessboard_size = (9,6), chessboard_square_size=25, frame_size=(480,480)):
+    """Find the corners of the chessboard images to correct for image distortion."""
     terminate = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
 
     objp = np.zeros((CHESSBOARD_SIZE[0] * CHESSBOARD_SIZE[1], 3), np.float32)
@@ -54,6 +55,7 @@ def find_corners_and_calculate(chessboard_size = (9,6), chessboard_square_size=2
 
     images = glob.glob('./camera_calibration/calibration_images/*.jpg')
 
+    # Iterates through the sample images and finds the corners.
     for image in images:
         img = cv2.imread(image)
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -70,15 +72,20 @@ def find_corners_and_calculate(chessboard_size = (9,6), chessboard_square_size=2
 
 def correct_fisheye(frame:np.ndarray, mapx, mapy, roi) -> np.ndarray:
     """Correct for the fisheye lens using cv2"""
+    # Remaps the correct values onto the frame.
     dst = cv2.remap(frame, mapx, mapy, cv2.INTER_LINEAR)
+
+    # Crop the corrected camera frame.
     x, y, w, h = roi
     dst = dst[y:y+h, x:x+w]
-    # Possibly fixed the video resolution.
+
+    # Resize the cropped image to (480,480).
     dst = cv2.resize(dst, (480, 480), interpolation=cv2.INTER_LINEAR)
 
     return dst
 
 def annotate_frame(frame:np.ndarray,text_overlay:Optional[list]=None, mapx=None, mapy=None, roi=None) -> np.ndarray:
+    """Annotates the undistorted camera frame."""
     now = datetime.now()
     text = datetime.strftime(now, "%m/%d/%Y, %H:%M:%S")
     resolution = frame.shape
@@ -86,6 +93,8 @@ def annotate_frame(frame:np.ndarray,text_overlay:Optional[list]=None, mapx=None,
     scale = 0.5
     color = (255, 255, 255)
     origin = (5, 20)
+    
+    # Corrects the barrel distrotion from the picam lense.
     frame = correct_fisheye(frame, mapx, mapy, roi)
 
     annotated = cv2.putText(frame, text, origin, cv2.FONT_HERSHEY_SIMPLEX,
