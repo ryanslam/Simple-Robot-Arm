@@ -590,14 +590,15 @@ if __name__ == '__main__':
     # Initialize the cam correction map.
     mapx, mapy = cv2.initUndistortRectifyMap(cam_matrix, dist, None, new_cam_matrix, (480,480), 5)
 
+    """Initialization of the log and telemetry handling for the robot arm."""
     # set up the robot
     server_logger.level = log_level
     robot_arm = robotics.RRTwoLink(socket_logging_handler, log_level)
     robot_arm.start_service(loop)
     start_telemetry()
+
+    """Running the web server/video"""
     try:
-
-
         web_app.add_routes(routes)
 
         # web_app.add_routes([aiohttp.web.get('/', landing)])
@@ -611,7 +612,7 @@ if __name__ == '__main__':
                                     path=static_folder_path,
                                     name='static')
                                     
-
+        # Initialize and start the camera/server.""
         cam = camera.CameraWrapper(framerate=60, mapx=mapx, mapy=mapy, roi=roi)
         cam.start_video()
         aiohttp.web.run_app(web_app)
