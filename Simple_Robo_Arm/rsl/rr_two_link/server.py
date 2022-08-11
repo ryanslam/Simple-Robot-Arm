@@ -89,15 +89,14 @@ socket_logging_handler = SocketIOHandler()
 socket_logging_handler.setFormatter(socket_logging_format)  # this didn't seem to work
 server_logger.addHandler(socket_logging_handler)
 
-##########################
-# Webpage Routing Section.
-########################## 
+
 @routes.get('/')
 async def landing(request):
     path_to_this_file = os.path.dirname(os.path.abspath(__file__))
     filename = os.path.join(path_to_this_file, 'templates/home.html')
     with open(filename) as file_obj:
         return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
+
 
 @routes.get('/master')
 async def master(request):
@@ -148,9 +147,6 @@ async def assignment_1(request):
     with open(filename) as file_obj:
         return aiohttp.web.Response(text = file_obj.read(), content_type='text/html')
 
-#################################################
-# Robotic arm demonstration and exercise section.
-################################################# 
 @socket_io.event
 async def connect(id, information):
     server_logger.info(f'Server connected to client id {id}.')
@@ -225,10 +221,7 @@ async def workspace_demo(id, theta_1_min, theta_1_max):
         return
 
     robot_arm.logger.info('Begin workspace demo')
-    # Set the flag to lock the robotic demo.
     robot_arm.doing_demo = True
-
-    # Initialize the robotics arm.
     robot_arm.set_control_mode(ControlTypes.ACTUATOR_POSITION_CONTROL)
     robot_arm.set_motor_gains(0, 80, 0)
     robot_arm.set_motor_gains(1, 80, 0)
@@ -236,8 +229,6 @@ async def workspace_demo(id, theta_1_min, theta_1_max):
     resolution = math.pi/4
     robot_arm.set_joint_pose((theta1, 0))
     await asyncio.sleep(5)
-
-    # Iterate through thee workspace until the max radian for theta 1 is reached.
     while not(theta1>math.radians(float(theta_1_max))):
         robot_arm.logger.info(str(theta1))
         robot_arm.set_joint_pose((theta1,math.radians(-180)))
@@ -247,14 +238,9 @@ async def workspace_demo(id, theta_1_min, theta_1_max):
         theta1+=resolution
         robot_arm.logger.info(str(theta1))
         await asyncio.sleep(1)
-
-    # Reset the robotic arm to the default "home" position.
     robot_arm.set_joint_pose((0,0))
     robot_arm.logger.info('Conclude workspace demo')
-
-    # Release the lock.
     robot_arm.doing_demo = False
-
 # async def workspace_demo(id, theta_1_min, theta_1_max, theta_2_min, theta_2_max):
 #     server_logger.info(f'Received WORKSPACE_DEMO command from id {id}')
 
@@ -420,26 +406,13 @@ async def set_cartesian_position(id, use_traj:bool, traj_time:str, x_str:str, y_
 
 
 @socket_io.event
-async def set_active_controller(id, controller_name:str, kps:str=None, kds:str=None):
+async def set_active_controller(id, controller_name:str):
     controller = robotics.ControlTypes(int(controller_name))
     server_logger.info(f'Received command SET_ACTIVE_CONTROLLER. Controller: {controller.name}')
     try:
-        if(kps == None and kds == None):
-            robot_arm.set_control_mode(controller)
-        else:
-            robot_arm.set_control_mode(controller, kps, kds)
+        robot_arm.set_control_mode(controller)
     except:
         server_logger.error(traceback.print_exc())
-
-# Original Function
-# @socket_io.event
-# async def set_active_controller(id, controller_name:str):
-#     controller = robotics.ControlTypes(int(controller_name))
-#     server_logger.info(f'Received command SET_ACTIVE_CONTROLLER. Controller: {controller.name}')
-#     try:
-#         robot_arm.set_control_mode(controller)
-#     except:
-#         server_logger.error(traceback.print_exc())
 
 
 @socket_io.event
@@ -447,7 +420,8 @@ async def set_controller_gains(id, pid_id, kp, ki, kd):
     """Change the gains of whatever controller is currently active."""
     server_logger.info(f'Received command SET_CONTROLLER_GAINS for motor: {pid_id} kp: {kp}, ki: {ki}, kd: {kd}')
     # try:
-    gains = (kp, ki, kd)
+    gains = (float(kp), 0.0, float(kd))
+    server_logger.info(f'Received command SET_CONTROLLER_GAINS for motor: {gains}')
     pid_id = int(pid_id)
     if pid_id not in (0, 1): raise ValueError
     if robot_arm.control_manager.active_controller_name == ControlTypes.ACTUATOR_POSITION_CONTROL:
@@ -581,9 +555,6 @@ def toggle_led(pin_num, sleep_time):
     time.sleep(sleep_time)
     GPIO.output(pin_num,False)
 
-##############################
-# Main web app server section.
-##############################
 if __name__ == '__main__':
     # Pin used or LEDs
     # GPIO.setmode(GPIO.BOARD)
@@ -609,26 +580,23 @@ if __name__ == '__main__':
     except:
         log_level = logging.INFO
 
-    """Camera distortion correction initialization section."""
-    # Find the corners of the sample chessboard images and return the corrected camera matrix.
     obj_points, img_points = camera.find_corners_and_calculate(CHESSBOARD_SIZE, CHESSBOARD_SQUARE_SIZE, FRAME_SIZE)
     ret, cam_matrix, dist, rvecs, tvecs = cv2.calibrateCamera(obj_points, img_points, (480,480), None, None)
     
-    # Undistortion section: Get the correct camera matrix.
+    # Undistortion section.
     new_cam_matrix, roi = cv2.getOptimalNewCameraMatrix(cam_matrix, dist, (480,480), 1, (480,480))
 
-    # Initialize the cam correction map.
+    # Undistort the image.
     mapx, mapy = cv2.initUndistortRectifyMap(cam_matrix, dist, None, new_cam_matrix, (480,480), 5)
 
-    """Initialization of the log and telemetry handling for the robot arm."""
     # set up the robot
     server_logger.level = log_level
     robot_arm = robotics.RRTwoLink(socket_logging_handler, log_level)
     robot_arm.start_service(loop)
     start_telemetry()
-
-    """Running the web server/video"""
     try:
+
+
         web_app.add_routes(routes)
 
         # web_app.add_routes([aiohttp.web.get('/', landing)])
@@ -642,7 +610,7 @@ if __name__ == '__main__':
                                     path=static_folder_path,
                                     name='static')
                                     
-        # Initialize and start the camera/server.""
+
         cam = camera.CameraWrapper(framerate=60, mapx=mapx, mapy=mapy, roi=roi)
         cam.start_video()
         aiohttp.web.run_app(web_app)

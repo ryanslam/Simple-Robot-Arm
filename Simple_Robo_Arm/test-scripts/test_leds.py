@@ -16,7 +16,7 @@ led_strip = Adafruit_NeoPixel(NUM_LEDS, LED_PIN, LED_FREQ, LED_DMA, LED_INVERT, 
 led_strip.begin()
 
 # Set the led to a white light
-for led in range(0, LED_COUNT):
+for led in range(0, NUM_LEDS):
     led_strip.setPixelColor(led, WHITE_LIGHT)
 
 led_strip.show()

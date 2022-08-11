@@ -66,15 +66,11 @@ class ControlTypes(IntEnum):
 
 class ControllerManager:
     def __init__(self):
-        self.kps = [55, 55]
-        self.kis = [0, 0]
-        self.kds = [7, 4]
         self.controllers: dict[ControlTypes, PIDController] = {
             ControlTypes.ACTUATOR_POSITION_CONTROL: PIDController(ControlTypes.ACTUATOR_POSITION_CONTROL, MathematicalSpaces.JOINT), # a dummy placeholder
             # ControlTypes.ACTUATOR_EXTENDED_POSITION_CONTROL: PIDController(ControlTypes.ACTUATOR_POSITION_CONTROL, MathematicalSpaces.JOINT), # a dummy placeholder
             ControlTypes.FEED_FORWARDS_VELOCITY_CONTROL: FeedForwardsVelocityController(),
-            # ControlTypes.JOINT_PID_TORQUE: JointPositionPID(),
-            ControlTypes.JOINT_PID_TORQUE: JointPositionPID(kps=self.kps, kis=self.kis, kds=kself.ds),
+            ControlTypes.JOINT_PID_TORQUE: JointPositionPID(),
             ControlTypes.RESOLVED_RATE: ResolvedRate(),                             
             ControlTypes.CARTESTIAN_TORQUE: CartesianTorque(),
             }
@@ -94,17 +90,6 @@ class ControllerManager:
             return True
         else:
             print(f'Error! in controller manager')
-            return False
-    
-    # Set the active controller gains.
-    def set_active_controller_gains(self, new_controller: ControlTypes, kps, kis, kds):
-        if new_controller in self.controllers.keys() and new_controller != ControlTypes.ACTUATOR_POSITION_CONTROL:
-            self.kps = kps
-            self.kis = kis
-            self.kds = kds
-            return True
-        else:
-            print(f'Error! Unable to set gains.')
             return False
 
 
@@ -202,21 +187,19 @@ class JointPIDController(PIDController):
 
 
 class JointPositionPID(JointPIDController):
-    def __init__(self, kps=[55, 35], kis=[0,0], kds=[7,4]):
+    def __init__(self):
         super().__init__(ControlTypes.JOINT_PID_TORQUE)
         # self.control_type: ControlTypes = ControlTypes.ACTUATOR_POSITION_CONTROL
         
-        # Original values for kps, kis, and kds.
         # kps = [55, 35]
         # kis = [0, 0]
         # kds = [7, 4]
 
-        # Allows for reinitilization of controller gains.
-        self.kps = kps
-        self.kis = kis
-        self.kds = kds
+        kps = [55, 100]
+        kis = [0, 0]
+        kds = [7, 4]
 
-        self._pids = self._produce_pid_controllers(2, self.kps, self.kis, self.kds, (0, 0))
+        self._pids = self._produce_pid_controllers(2, kps, kis, kds, (0, 0))
         saturation_point = 1000 # milli amps
         self._set_pid_saturation_points([saturation_point, saturation_point])
 

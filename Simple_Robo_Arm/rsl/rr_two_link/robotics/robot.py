@@ -247,36 +247,7 @@ class DynamixelSerialChainManipulator:
 	######################################################
 	########### Controllers and motion ###########
 	######################################################
-	# Original
-	# def set_control_mode(self, mode:ControlTypes) -> bool:
-	# 	# set the mode for the actuators
-	# 	actuator_mode = ControlTypes.get_actuator_mode(mode)
-	# 	self.logger.info(f'Setting actuator mode to {actuator_mode.name} for incoming control mode {mode.name}')
-	# 	orig_power_state = self.power_status
-	# 	if orig_power_state == PowerState.ON:
-	# 		self.torque_disable()
-	# 	results = [a.set_control_mode(actuator_mode) for a in self._actuators]
-		
-	# 	# kp = 100 #rad/s
-	# 	# [a.servo.write_control_table("Position_P_Gain", kp) for a in self._actuators]
-
-	# 	if orig_power_state == PowerState.ON:
-	# 		self.torque_enable()
-	# 	# Active controller: Pass kps and kds.
-	# 	self.control_manager.set_active_controller(mode)
-	# 	if self.control_manager.active_controller.control_space == MathematicalSpaces.JOINT:
-	# 		self.control_manager.active_controller.set_target(self.Q, np.array([0, 0]))	# leads to more natural transistions
-	# 	else:
-	# 		self.control_manager.active_controller.set_target(self.X, np.array([0, 0]))	# leads to more natural transistions
-	# 	# self.logger.debug(f'Controller {self.control_manager.active_controller_name.name} has new setpoint: {[prettify_radians(i) for i in self.control_manager.active_controller.get_setpoints()]}')
-
-	# 	if not all(results):
-	# 		self.logger.info(f'Control mode change to {mode.name} failed')
-	# 		return False
-	# 	self.logger.info(f'Control mode successfully changed to {mode.name}')
-	# 	return True
-
-	def set_control_mode(self, mode:ControlTypes, kps, kds) -> bool:
+	def set_control_mode(self, mode:ControlTypes) -> bool:
 		# set the mode for the actuators
 		actuator_mode = ControlTypes.get_actuator_mode(mode)
 		self.logger.info(f'Setting actuator mode to {actuator_mode.name} for incoming control mode {mode.name}')
@@ -290,10 +261,7 @@ class DynamixelSerialChainManipulator:
 
 		if orig_power_state == PowerState.ON:
 			self.torque_enable()
-		# Active controller: Pass kps and kds.
-		# Added set_active_controller_gains
-		self.control_manager.set_active_controller_gains(mode, kps, [0,0], kds)
-		
+
 		self.control_manager.set_active_controller(mode)
 		if self.control_manager.active_controller.control_space == MathematicalSpaces.JOINT:
 			self.control_manager.active_controller.set_target(self.Q, np.array([0, 0]))	# leads to more natural transistions
