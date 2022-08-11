@@ -420,13 +420,26 @@ async def set_cartesian_position(id, use_traj:bool, traj_time:str, x_str:str, y_
 
 
 @socket_io.event
-async def set_active_controller(id, controller_name:str):
+async def set_active_controller(id, controller_name:str, kps:str=None, kds:str=None):
     controller = robotics.ControlTypes(int(controller_name))
     server_logger.info(f'Received command SET_ACTIVE_CONTROLLER. Controller: {controller.name}')
     try:
-        robot_arm.set_control_mode(controller)
+        if(kps == None and kds == None):
+            robot_arm.set_control_mode(controller)
+        else:
+            robot_arm.set_control_mode(controller, kps, kds)
     except:
         server_logger.error(traceback.print_exc())
+
+# Original Function
+# @socket_io.event
+# async def set_active_controller(id, controller_name:str):
+#     controller = robotics.ControlTypes(int(controller_name))
+#     server_logger.info(f'Received command SET_ACTIVE_CONTROLLER. Controller: {controller.name}')
+#     try:
+#         robot_arm.set_control_mode(controller)
+#     except:
+#         server_logger.error(traceback.print_exc())
 
 
 @socket_io.event

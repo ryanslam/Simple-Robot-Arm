@@ -1,200 +1,326 @@
 <!-- Webpage for Dynamics Coupling Demo -->
 <!DOCTYPE html>
 <html lang="en">
-  <style>
-    * {
-      font-family: 'Open Sans', sans-serif;
-      box-sizing: border-box;
+<style>
+  * {
+    font-family: 'Open Sans', sans-serif;
+    box-sizing: border-box;
+  }
+</style>
+
+<head>
+  <meta charset="utf-8">
+  <title>Controls Demonstration</title>
+  <link href="/static/css/exercise_layout.css" rel="stylesheet">
+
+  <!-- CSS for Boostrap. -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+  <script>
+    // < !-change the host if sending the message outside localhost ->
+    const socket = io("http://simple-robot-arm:8080",
+      { transports: ['websocket', 'polling', 'flashsocket'] }
+    );
+
+    socket.on("disconnect", function () {
+      console.log("Disconnected from server.")    // alert?
+    });
+  </script>
+</head>
+
+<body>
+  <!--Navigation Bar Section-->
+  <nav class="navbar navbar-expand-lg navbar-fade navbar-dark bg-dark sticky-top">
+    <a class="navbar-brand mb-0" href="#">
+      Robotics I&II
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="nav navbar-nav ml-auto">
+        <li class="nav-item">
+          <button class="btn btn-default bg-dark text-light" type="button" data-toggle="dropdown"
+            onclick="window.location.href='http://simple-robot-arm:8080/';">Home</button>
+
+        </li>
+        <li class="nav-item dropdown">
+          <button class="btn btn-default dropdown-toggle bg-dark text-light" type="button"
+            data-toggle="dropdown">Demonstrations</button>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="http://simple-robot-arm:8080/workspace_demo">Workspace</a>
+            <a class="dropdown-item" href="http://simple-robot-arm:8080/jacobian">Jacobian</a>
+            <a class="dropdown-item" href="http://simple-robot-arm:8080/dynamics_coupling">Dynamics
+              Coupling</a>
+            <a class="dropdown-item" href="http://simple-robot-arm:8080/controls">Controls</a>
+          </div>
+        </li>
+        <li class="nav-item dropdown">
+          <button class="btn btn-default dropdown-toggle bg-dark text-light" type="button"
+            data-toggle="dropdown">Exercises</button>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+            <a class="dropdown-item" href="http://simple-robot-arm:8080/exercise_1">Forward Kinematics</a>
+            <a class="dropdown-item" href="http://simple-robot-arm:8080/exercise_2">Inverse Kinematics</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Need to correct the pathing/routing for static files.-->
+  <script src="/static/scripts/utility.js"></script>
+  <script src="/static/scripts/toggle_light.js"></script>
+  <script src="/static/scripts/telemetry.js"></script>
+  <script src="/static/scripts/controls.js"></script>
+  <script>
+    // function set_active_controller() {
+    //   console.log("Client sending command SET_ACTIVE_CONTROLLER")
+    //   controller_to_set = document.getElementById("controller_select").value
+    //   if (controller_to_set === '0') {
+    //     disbale_gains_section(false);
+    //     socket.emit("set_active_controller", controller_to_set)
+    //   }
+    //   else {
+    //     disbale_gains_section(true);
+    //     socket.emit("set_active_controller", controller_to_set)
+    //   }
+
+    // }
+    function set_active_controller() {
+      console.log("Client sending command SET_ACTIVE_CONTROLLER")
+      controller_to_set = document.getElementById("controller_select").value
+      kp_0 = document.getElementById("kp_motor_0").value
+      kd_0 = document.getElementById("kd_motor_0").value
+      kp_1 = document.getElementById("kp_motor_1").value
+      kd_1 = document.getElementById("kd_motor_1").value
+      kps = [kp_0, kp_1].toString();
+      kds = [kd_0, kd_1].toString();
+      console.log(kps, typeof(kps));
+      if(controller_to_set === '0'){
+          disbale_gains_section(false);
+          socket.emit("set_active_controller", controller_to_set)
+      }
+      else if(controller_to_set === '4'){
+          disbale_gains_section(true);
+          console.log('sending kps:' + kps + ' and kds:' +kds)
+          socket.emit("set_active_controller", controller_to_set, kps, kds)
+      }
+      else{
+          disbale_gains_section(true);
+          socket.emit("set_active_controller", controller_to_set)
+      }
     }
-  </style>
-    <head>
-        <meta charset="utf-8">
-        <title>Controls Demonstration</title>
-        <link href="/static/css/exercise_layout.css" rel="stylesheet">
 
-        <!-- CSS for Boostrap. -->
-         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    function disbale_gains_section(value) {
+      var childNodes = document.getElementById("actuator-position-controller-gain-config").getElementsByTagName("*");
+      for (var node of childNodes) {
+        node.disabled = value;
+        if (node.tagName == "BUTTON") {
+          continue;
+        }
+        // Grey out the disabled elements.
+        if (value == true) {
+          node.style.color = "#D3D3D3";
+        }
+        // Reset the original element color.
+        else {
+          node.style.color = "#000000";
+        }
+      }
+    }
+  </script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
-        <script>
-            // < !-change the host if sending the message outside localhost ->
-            const socket = io("http://simple-robot-arm:8080",
-            {transports: ['websocket', 'polling', 'flashsocket']}
-            );
-    
-            socket.on("disconnect", function (){
-                console.log("Disconnected from server.")    // alert?
-            });
-            </script>
-    </head>
-    <body>
-        <!--Navigation Bar Section-->
-        <nav class="navbar navbar-expand-lg navbar-fade navbar-dark bg-dark sticky-top">
-          <a class="navbar-brand mb-0" href="#">
-            Robotics I&II
-          </a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          
-        
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="nav navbar-nav ml-auto">
-              <li class="nav-item">
-                <button class="btn btn-default bg-dark text-light" type="button" data-toggle="dropdown" onclick="window.location.href='http://simple-robot-arm:8080/';">Home</button>
+  <!--Start of the Dynamics Coupling Section-->
+  <!--<div class="bg-secondary bg-gradient">-->
+  <div class="container">
+    <br>
+    <h1 class="text-center text-light"><u>Dynamics Coupling Demonstration</u></h1>
+    <br>
+  </div>
+  <div class="container bg-light Jumbotron">
+    <!--<fieldset class="command_window bg-light">-->
+    <h1>Video Feed</h1>
+    <!--<div class="embed-responsive embed-responsive-21by9">-->
+    <div class="text-center">
+      <!--<img id="video_feed text-center", src="/video_feed">-->
+      <iframe class="embed-responsive-item" src="/video_feed" width="485" height="485"></iframe>
 
-              </li>
-              <li class="nav-item dropdown">
-                <button class="btn btn-default dropdown-toggle bg-dark text-light" type="button" data-toggle="dropdown">Demonstrations</button>
-                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="http://simple-robot-arm:8080/workspace_demo">Workspace</a>
-                    <a class="dropdown-item" href="http://simple-robot-arm:8080/jacobian">Jacobian</a>
-                    <a class="dropdown-item" href="http://simple-robot-arm:8080/dynamics_coupling">Dynamics Coupling</a>
-                    <a class="dropdown-item" href="http://simple-robot-arm:8080/controls">Controls</a>
-                  </div>
-                </li>
-              <li class="nav-item dropdown">
-                <button class="btn btn-default dropdown-toggle bg-dark text-light" type="button" data-toggle="dropdown">Exercises</button>
-                  <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                    <a class="dropdown-item" href="http://simple-robot-arm:8080/exercise_1">Forward Kinematics</a>
-                    <a class="dropdown-item" href="http://simple-robot-arm:8080/exercise_2">Inverse Kinematics</a>
-                  </div>
-              </li>
-            </ul>
+    </div>
+    <!--<img id="video_feed", src="/video_feed">-->
+    <!--</fieldset>-->
+    <br>
+  </div>
+  <br>
+  <div class="container jumbotron">
+    <h1>Commands</h1>
+    <div class="row-md-3">
+      <div class="container">
+        <div class="col">
+          <u><h3>Utility</h3></u>
+        </div>
+        <div class="col">
+          <button type="button" class="btn btn-secondary btn-sm" onClick="disable_torque()">MOTORS
+            OFF</button>
+          <button type="button" class="btn btn-secondary btn-sm" onClick="enable_torque()">MOTORS ON</button>
+          <button type="button" class="btn btn-secondary btn-sm" onClick="go_home()">GO HOME</button>
+          <button type="button" class="btn btn-secondary btn-sm" onClick="reconnect_dynamixel()">RECONNECT TO
+            DYNAMIXEL</button>
+          <button type="button" class="btn btn-secondary btn-sm" onClick="toggle_light()">TOGGLE
+            LIGHT</button>
+        </div>
+      </div>
+      <br>
+      <div class="row-md-3">
+        <div class="container">
+          <div class="col">
+            <u><h3>Control Settings</h3></u>
+            <div class="col justify-content-center"></div>
+            <div class="col-lg-10 justify-content-center">
+              <button type="button" class="btn btn-secondary btn-sm" onClick="set_active_controller()">SET
+                ACTIVE CONTROLLER</button>
+              <select name="controller_select" id="controller_select">
+                <option value="0">ACTUATOR POSITION CONTROLLER</option>
+                <option value="2">FEED FORWARDS VELOCITY </option>
+                <option value="4">JOINT PID TORQUE</option>
+                <option value="3">RESOLVED RATE (SPEED)</option>
+                <option value="5">CARTESIAN TORQUE</option>
+              </select>
+            </div>
           </div>
-        </nav>
-
-        <!-- Need to correct the pathing/routing for static files.-->
-        <script src="/static/scripts/utility.js"></script>
-        <script src="/static/scripts/toggle_light.js"></script>
-        <script src="/static/scripts/telemetry.js"></script>
-        <script src="/static/scripts/controls.js"></script>
-
-        <!--Start of the Dynamics Coupling Section-->
-        <!--<div class="bg-secondary bg-gradient">-->
-          <div class="container">
-            <br>
-            <h1 class="text-center text-light"><u>Dynamics Coupling Demonstration</u></h1>
-            <br>
-          </div>
-          <div class="container bg-light Jumbotron">
-              <!--<fieldset class="command_window bg-light">-->
-                <h1>Video Feed</h1>
-                <!--<div class="embed-responsive embed-responsive-21by9">-->
-                <div class="text-center">
-                  <!--<img id="video_feed text-center", src="/video_feed">-->
-                    <iframe class="embed-responsive-item" src="/video_feed" width="485" height="485"></iframe>
-
-                </div>
-                  <!--<img id="video_feed", src="/video_feed">-->
-              <!--</fieldset>-->
-              <br>
-          </div>
-          <br>
-          <div class="container jumbotron">
-            <h1>Commands</h1>
-            <div class="row-md-3">
-              <div class="container">
-                <div class="col">
-                  <h5>Utility</h5>
-                </div>
-                <div class="col">
-                  <button type="button" class="btn btn-secondary btn-sm" onClick="disable_torque()">MOTORS OFF</button>
-                  <button type="button" class="btn btn-secondary btn-sm" onClick="enable_torque()">MOTORS ON</button>
-                  <button type="button" class="btn btn-secondary btn-sm" onClick="go_home()">GO HOME</button>
-                  <button type="button" class="btn btn-secondary btn-sm" onClick="reconnect_dynamixel()">RECONNECT TO DYNAMIXEL</button>
-                  <button type="button" class="btn btn-secondary btn-sm" onClick="toggle_light()">TOGGLE LIGHT</button>
-                </div>
-              </div>
-          </div>
-          <br>
-          <br>
-          <div class="row-md-3">
+        </div>
+      </div>
+      <br>
+      <div class="row-md-3">
+        <div class="container">
+          <div class="col">
             <div class="container">
-              <div class="col">
-                <h5>Control Settings</h5>
-                <button type="button" class="btn btn-secondary btn-sm" onClick="set_active_controller()">SET ACTIVE CONTROLLER</button>
-                <select name="controller_select" id="controller_select">
-                    <option value="0">ACTUATOR POSITION CONTROLLER</option>
-                    <option value="2">FEED FORWARDS VELOCITY </option>
-                    <option value="4">JOINT PID TORQUE</option>
-                    <option value="3">RESOLVED RATE (SPEED)</option>
-                    <option value="5">CARTESIAN TORQUE</option>
-                </select>
-                <br>
-                <br>
-                <button type="button" class="btn btn-secondary btn-sm" onClick="set_controller_gains()">SET CONTROLLER GAINS</button>
-                <select name="motor_id" id="motor_id">
-                    <option value="0">1st PID</option>
-                    <option value="1">2nd PID</option>
-                </select>
-                <label for="kp">Kp</label>
-                <input name="kp" type="number" id="kp" value="0" min="0" max="100" step="1">
-                <label for="ki">Ki</label>
-                <input name="ki" type="number" id="ki" value="0" min="0" max="100" step="1">
-                <label for="kd">Kd</label>
-                <input name="kd" type="number" id="kd" value="0" min="0" max="100" step="1">
-                <br>
-                <label for="check_enable_kis">Enable kis </label>
-                <input type="checkbox" id = "check_enable_kis">
-                <br>
-              </div>
-              <div class="col">
-                <br>
-                <h5>Set Goal Joint Position</h5>
-                <label for="theta1">θ_1:</label>
-                <input name="theta1" type="number" id="theta1" value="0" min="-180" max="180" step="45">
-                <label for="theta2">θ_2:</label>
-                <input name="theta2" type="number" id="theta2" value="0" min="-180" max="180" step="45"> (degrees)
-                <br>
-                <button type="button" class="btn btn-secondary btn-sm" onClick="set_joint_position()">SET JOINT POSITION</button>
-                <br>
-                <br>
-                </div>
-                <div class="container">
-                  <div class="row">
-                    <div class="col justify-content-center">
-                      <h1>Telemetry</h1>
-                      <div class="card" style="width: 18rem;">
-                        <small id="motor_0_enabled">Motor 0:</small>
-                        <small id="motor_1_enabled">Motor 1:</small>
-                        <small id="ee_position">ee Position:</small>
-                        <small id="joint_position">Joint Position:</small>
-                        <br>
-                        <small id="current_controller">Current Controller:</small>
-                        <small id="controller_gains_0">Controller 0 Gains:</small>
-                        <small id="controller_gains_1">Controller 1 Gains:</small>
-                      </div>
-                      <p>Link lengths: (200, 200) mm</h3>
+              <div class="row">
+                <u><h3>Gains Settings</h3></u>
+                <div class="col justify-content-center"></div>
+                <div class="col-lg-10 justify-content-center">
+                  <div id="actuator-position-controller-gain-config">
+                    <h5>Actuator Position Controller Gains Control</h5>
+                    <div class="col justify-content-center"></div>
+                    <div class="col-lg-10 justify-content-center">
+                      <button type="button" class="btn btn-secondary btn-sm" onClick="set_controller_gains()">SET
+                        CONTROLLER GAINS</button>
+                      <select name="motor_id" id="motor_id">
+                        <option value="0">1st PID</option>
+                        <option value="1">2nd PID</option>
+                      </select>
+                      <label for="kp">Kp</label>
+                      <input name="kp" type="number" id="kp" value="0" min="0" max="100" step="1">
+                      <!-- <label for="ki">Ki</label>
+                        <input name="ki" type="number" id="ki" value="0" min="0" max="100" step="1"> -->
+                      <label for="kd">Kd</label>
+                      <input name="kd" type="number" id="kd" value="0" min="0" max="100" step="1">
                     </div>
-                    <div class="col justify-content-center">
-                      <h1>Activity Log</h1>
-                        <div class="log_window bg-light" id="log_window"></div>
+                  </div>
+                </div>
+                <div class="col justify-content-center"></div>
+                <div class="col-lg-10 justify-content-center">
+                  <div>
+                    <br>
+                    <h5>Test Controller Gains</h5>
+                    <div class="col justify-content-center"></div>
+                    <div class="col-lg-10 justify-content-center">
+                      <b><label>Motor 0:</label></b>
+                      <label for="kp_motor_0">Kp</label>
+                      <input name="kp_motor_0" type="number" id="kp_motor_0" value="0" min="0" max="80" step="1">
+                      <!-- <label for="ki">Ki</label>
+                            <input name="ki" type="number" id="ki" value="0" min="0" max="100" step="1"> -->
+                      <label for="kd_motor_0">Kd</label>
+                      <input name="kd_motor_0" type="number" id="kd_motor_0" value="0" min="0" max="80" step="1">
+                      <br>
+                      <b><label>Motor 1:</label></b>
+                      <label for="kp_motor_1">Kp</label>
+                      <input name="kp_motor_1" type="number" id="kp_motor_1" value="0" min="0" max="80" step="1">
+                      <!-- <label for="ki">Ki</label>
+                            <input name="ki" type="number" id="ki" value="0" min="0" max="100" step="1"> -->
+                      <label for="kd_motor_1">Kd</label>
+                      <input name="kd_motor_1" type="number" id="kd_motor_1" value="0" min="0" max="80" step="1">
                     </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        <!--</div>-->
-        <!-- https://mdbootstrap.com/docs/standard/navigation/footer/examples-and-customization/ -->
-        <footer class="bg-dark text-center text-white">
-          <!-- Grid container -->
-          <!-- Social Media Stuff -->
-          <div class="container p-4 pb-0">
-            
+        </div>
+      </div>
+    </div>
+    <br>
+    <div class="row-md-3">
+      <div class="container">
+        <div class="col">
+          <u><h3>Robotic Arm Joint Position</h3></u>
+          <div class="col justify-content-center"></div>
+          <div class="col-lg-10 justify-content-center">
+            <label for="theta1">θ_1:</label>
+            <input name="theta1" type="number" id="theta1" value="0" min="-180" max="180" step="45">
+            <label for="theta2">θ_2:</label>
+            <input name="theta2" type="number" id="theta2" value="0" min="-180" max="180" step="45"> (degrees)
+            <br>
+            <button type="button" class="btn btn-secondary btn-sm" onClick="set_joint_position()">SET JOINT
+              POSITION</button>
+            <br>
+            <br>
           </div>
-          <!-- Copyright -->
-          <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
-            © 2022 Copyright:
-            <a class="text-white" href="https://www.scu.edu/engineering/labs--research/labs/robotic-systems-lab/">Robotics System Lab</a>
+        </div>
+        <div class="container">
+          <div class="row">
+            <div class="col justify-content-center">
+              <h1>Telemetry</h1>
+              <div class="card" style="width: 18rem;">
+                <small id="motor_0_enabled">Motor 0:</small>
+                <small id="motor_1_enabled">Motor 1:</small>
+                <small id="ee_position">ee Position:</small>
+                <small id="joint_position">Joint Position:</small>
+                <br>
+                <small id="current_controller">Current Controller:</small>
+                <small id="controller_gains_0">Controller 0 Gains:</small>
+                <small id="controller_gains_1">Controller 1 Gains:</small>
+              </div>
+              <p>Link lengths: (200, 200) mm</h3>
+            </div>
+            <div class="col justify-content-center">
+              <h1>Activity Log</h1>
+              <div class="log_window bg-light" id="log_window"></div>
+            </div>
           </div>
-          <!-- Copyright -->
-        </footer>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--</div>-->
+  <!-- https://mdbootstrap.com/docs/standard/navigation/footer/examples-and-customization/ -->
+  <footer class="bg-dark text-center text-white">
+    <!-- Grid container -->
+    <!-- Social Media Stuff -->
+    <div class="container p-4 pb-0">
 
-        <!-- Scripts for Bootstrap. -->
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    </body>
+    </div>
+    <!-- Copyright -->
+    <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.2);">
+      © 2022 Copyright:
+      <a class="text-white" href="https://www.scu.edu/engineering/labs--research/labs/robotic-systems-lab/">Robotics
+        System Lab</a>
+    </div>
+    <!-- Copyright -->
+  </footer>
+
+  <!-- Scripts for Bootstrap. -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+</body>
+
 </html>
