@@ -8,12 +8,10 @@ function set_active_controller() {
 function set_controller_gains() {
     console.log("Client sending command SET_CONTROLLER_GAINS")
     motor_id = document.getElementById("motor_id").value
-    ki_check = document.getElementById("check_enable_kis")
     kp = document.getElementById("kp").value
-    ki = document.getElementById("ki").value
     kd = document.getElementById("kd").value
-    if(ki_check){
-        socket.emit("set_controller_gains", motor_id, kp, ki, kd)
+    if(kp > 80 || kd > 80 || kp < 0 || kd < 0){
+        alert("Inputted kp and kd values are out of range.\nViable Range: (0,80)")
     }
     else{
         socket.emit("set_controller_gains", motor_id, kp, 0, kd)
