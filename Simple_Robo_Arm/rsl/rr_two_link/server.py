@@ -277,9 +277,9 @@ async def workspace_demo(id, theta_1_min, theta_1_max):
 #         robot_arm.set_joint_pose((0, 0))
 #         robot_arm.doing_demo = False
 
-@socket_io.event
-async def light_toggle(id, light_state):
-    pass
+# @socket_io.event
+# async def light_toggle(id, light_state):
+#     pass
 
 @socket_io.event
 async def dynamics_coupling_demo(id):
@@ -361,12 +361,12 @@ async def set_joint_position(id, use_traj:bool, traj_time:str, t1:str, t2:str, x
         y_correct = abs(solution[1] - float(y_guess)) < 2
         if x_correct and y_correct:
             # If correct, shine green LED.
-            toggle_led(11, 5)
+            # toggle_led(11, 5)
             server_logger.info(f'Forward kinematics solution guess was correct! Solution: {solution}')
             await check_correct('True')
         else:
             # If incorrect, shine red LED.
-            toggle_led(12, 5)
+            # toggle_led(12, 5)
             server_logger.info(f'Forward kinematics solution guess was incorrect! Correct solution {solution}')
             await check_correct('False')
     await send_telemtry()
@@ -393,12 +393,12 @@ async def set_cartesian_position(id, use_traj:bool, traj_time:str, x_str:str, y_
         theta2_correct = abs(solution[1] - theta2) < 2
         if theta1_correct and theta2_correct:
             # If correct, shine green LED.
-            toggle_led(11, 5)
+            # toggle_led(11, 5)
             server_logger.info(f'Inverse kinematics solution guess was correct! Solution: {solution}')
             await check_correct('True')
         else:
              # If incorrect, shine red LED.
-            toggle_led(12, 5)
+            # toggle_led(12, 5)
             server_logger.info(f'Inverse kinematics solution guess was incorrect! Correct solution {solution}')
             await check_correct('False')
 
@@ -550,10 +550,10 @@ def start_telemetry():
     telemetry_task = loop.create_task(telemetry_service())
 
 # Responsible for toggling the leds for correct or incorrect guesses.
-def toggle_led(pin_num, sleep_time):
-    GPIO.output(pin_num,True)
-    time.sleep(sleep_time)
-    GPIO.output(pin_num,False)
+# def toggle_led(pin_num, sleep_time):
+#     GPIO.output(pin_num,True)
+#     time.sleep(sleep_time)
+#     GPIO.output(pin_num,False)
 
 if __name__ == '__main__':
     # Pin used or LEDs
